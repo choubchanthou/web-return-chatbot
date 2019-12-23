@@ -11,9 +11,10 @@ const port = process.env.PORT || 3000;
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+const token = process.env.FB_TOKEN || "";
 app.get('/', (req, res) => res.send('Proxy version 1.0'));
 app.get('/webhook', function (req, res) {
-    if (req.query['hub.verify_token'] === process.env.FB_TOKEN) {
+    if (req.query['hub.verify_token'] === token) {
 		res.send(req.query['hub.challenge']);
 	}
 	res.send('Wrong token!');
