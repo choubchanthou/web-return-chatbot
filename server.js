@@ -34,16 +34,17 @@ app.post('/webhook/', function(req, res) {
         let store_name = sess.store_name;
         if (event.message && event.message.text) {
             var text = event.message.text;
-            if (!store_name) {
-                if (hasAvailable(text)){
-                    sess.store_name = text;
-                    sendTextMessage(sender, "Please enter your order number: ");
-                } else {
-                    sendTextMessage(sender, "Sorry, your store are not registed. Please try again!");
-                }
-            } else {
-                handleCreateShipback(sender, text);
-            }
+            sendTextMessage(sender, "Please enter your order number: ");
+            // if (!store_name) {
+            //     if (hasAvailable(text)){
+            //         sess.store_name = text;
+            //         sendTextMessage(sender, "Please enter your order number: ");
+            //     } else {
+            //         sendTextMessage(sender, "Sorry, your store are not registed. Please try again!");
+            //     }
+            // } else {
+            //     handleCreateShipback(sender, text);
+            // }
         }
     }
     res.sendStatus(200);
