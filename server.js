@@ -42,7 +42,7 @@ app.post('/webhook/', function(req, res) {
                     sendTextMessage(sender, "Sorry, your store are not registed. Please try again!");
                 }
             } else {
-                handleCreateShipback(sender, text);
+                sendTextMessage(sender, db.store_name);
             }
         }
     }
