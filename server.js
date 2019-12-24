@@ -1,11 +1,10 @@
 'use strict';
 
 const express = require('express');
-const session = require('express-session');
 const bodyParser = require('body-parser');
 const request = require('request');
-const axios = require('axios');
 const app = express();
+const fs = require('fs');
 require('dotenv').config();
 
 const port = process.env.PORT || 3000;
@@ -13,10 +12,8 @@ const dashboard_url = process.env.DASHBOARD_URL;
 const auth_token = process.env.AUTH_TOKEN;
 const token = process.env.FB_TOKEN || "";
 const fb_url = process.env.FB_URL;
-let sess;
 
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(session({secret: 'ssshhhhhAdfs023231',saveUninitialized: true,resave: true}));
 app.use(bodyParser.json());
 app.get('/', (req, res) => res.send('Proxy version 1.0'));
 app.get('/webhook', function (req, res) {
@@ -26,17 +23,19 @@ app.get('/webhook', function (req, res) {
 	res.send('Wrong token!');
 });
 app.post('/webhook/', function(req, res) {
-    sess = req.session;
     var messaging_events = req.body.entry[0].messaging;
     for (var i = 0; i < messaging_events.length; i++) {
         var event = req.body.entry[0].messaging[i];
         var sender = event.sender.id;
-        let store_name = sess.store_name;
+        let rawdata = fs.readFileSync('fb.json');
+        let db = JSON.parse(rawdata);
         if (event.message && event.message.text) {
             var text = event.message.text;
-            if (!store_name) {
+            if (db.store_name == undefined) {
                 if (hasAvailable(text)){
-                    sess.store_name = text;
+                    db.store_name = text;
+                    const json = JSON.stringify(db);
+                    fs.writeFile('fb.json', json, 'utf8', callback);
                     sendTextMessage(sender, "Please enter your order number: ");
                 } else {
                     sendTextMessage(sender, "Sorry, your store are not registed. Please try again!");
