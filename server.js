@@ -31,7 +31,7 @@ app.post('/webhook/', function(req, res) {
         let db = JSON.parse(rawdata);
         if (event.message && event.message.text) {
             var text = event.message.text;
-            if (db.store_name == undefined) {
+            if (db.store_name == 0) {
                 if (hasAvailable(text)){
                     db.store_name = text;
                     const json = JSON.stringify(db);
