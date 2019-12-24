@@ -69,7 +69,7 @@ function sendTemplate(sender) {
                     type: "web_url",
                     url: web_url,
                     title: "Return shipback",
-                    webview_height_ratio: "compact",
+                    webview_height_ratio: "full",
                     messenger_extensions: false
                 }]
             }
