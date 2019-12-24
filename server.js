@@ -109,11 +109,7 @@ const createShipback = async (order_id) => {
 }
 
 const httpHeaderFB = (token = null) => {
-    const headers = (token != null) ?{
-        'Content-Type': 'application/json',
-        'Authorization': `access_token=${token}`
-    } : { 'Content-Type': 'application/json' };
-    return headers;
+    return { access_token: token };
 }
 
 const httpHeaderSRB = (token = null) => {
@@ -136,7 +132,7 @@ const httpRequest = (url, method, json = {}, headers = {}) => {
         request({
             url: `${url}`,
             method,
-            headers,
+            qs: headers,
             json
         }, (error, response, body) => {
             console.log(headers);
