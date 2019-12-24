@@ -132,10 +132,10 @@ const httpRequest = (url, method, json = {}, headers = {}) => {
         request({
             url: `${url}`,
             method,
+            headers: headers,
             qs: headers,
             json
         }, (error, response, body) => {
-            console.log(headers);
             resolve(body);   
         });
     });
