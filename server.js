@@ -41,7 +41,7 @@ app.post('/webhook/', async (req, res) => {
                     sendTextMessage(sender, "Sorry, your store has not registed. Please try again!");
                 }
             } else {
-                if(data.step == 1) {
+                if(data_check == 1) {
                     handleCreateShipback(sender, text);
                 } else {
                     sendTextMessage(sender, "Please enter your store name: ");
