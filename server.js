@@ -54,9 +54,9 @@ app.post('/webhook/', async (req, res) => {
 });
 app.post('/shipbacks', async (req, res) => {
     const { name, sender } = req.body || {};
-    const data_check = await fetchSessionSender(sender);
-    console.log(data_check);
-    res.json('test');
+    const { shipback } = await createShipback('12312');
+    console.log(shipback);
+    res.json(shipback);
 });
 const hasAvailable = async (store) => {
     const data = await fetchByField("stores", { name: store.trim() });
@@ -166,11 +166,12 @@ const toCondition = (object, terminate = ",") => {
 const handleCreateShipback = async (sender, text) => {
     try {
         const { shipback } = await createShipback(text);
-        if (shipback.error) {
-            sendTextMessage(sender, 'Sorry, Your order number is not registed');
-        } else {
-            sendTemplate(sender, shipback.public_url);
-        }
+        sendTextMessage(JSON.stringify(shipback));
+        // if (shipback.error) {
+        //     sendTextMessage(sender, 'Sorry, Your order number is not registed');
+        // } else {
+        //     sendTemplate(sender, shipback.public_url);
+        // }
     } catch (error) {
         sendTextMessage(error);
     }
