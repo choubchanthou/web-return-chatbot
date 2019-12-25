@@ -61,7 +61,7 @@ const hasAvailable = async (store) => {
 };
 const fetchSessionSender = async (sender) => {
     const data = await fetchByField("sessions", {sender});
-    return data.length == 0 ? {} : data;
+    return data.length == 0 ? "test" : data;
 };
 const fetchById = (table, id) => {
     const sql = `Select * From ${table} Where id=?`;
