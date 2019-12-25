@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const request = require('request');
 const app = express();
 const fs = require('fs');
+const { db } = require('./config');
 require('dotenv').config();
 
 const port = process.env.PORT || 3000;
@@ -18,47 +19,158 @@ app.use(bodyParser.json());
 app.get('/', (req, res) => res.send('Proxy version 1.0'));
 app.get('/webhook', function (req, res) {
     if (req.query['hub.verify_token'] === token) {
-		res.send(req.query['hub.challenge']);
-	}
-	res.send('Wrong token!');
+        res.send(req.query['hub.challenge']);
+    }
+    res.send('Wrong token!');
 });
-app.post('/webhook/', function(req, res) {
+app.post('/webhook/', async (req, res) => {
     var messaging_events = req.body.entry[0].messaging;
     for (var i = 0; i < messaging_events.length; i++) {
         var event = req.body.entry[0].messaging[i];
         var sender = event.sender.id;
-        let rawdata = fs.readFileSync('fb.json');
-        let db = JSON.parse(rawdata);
         if (event.message && event.message.text) {
             var text = event.message.text;
-            // sendTextMessage(sender, db.store_name);
-            if (db.store_name == 0) {
-                if (hasAvailable(text)){
-                    db.store_name = text;
-                    const json = JSON.stringify(db);
-                    fs.writeFile('fb.json', json, 'utf8', callback);
+            const data_check = await fetchSessionSender(name, sender);
+            const { step } = data_check;
+            if(step == undefined) {
+                const has_store_available = await hasAvailable(name);
+                if(has_store_available) {
+                    await insertOne("sessions",{ sender: sender, store_name: name, step: 1 });
                     sendTextMessage(sender, "Please enter your order number: ");
                 } else {
-                    sendTextMessage(sender, "Sorry, your store are not registed. Please try again!");
+                    sendTextMessage(sender, "Sorry, your store has not registed. Please try again!");
                 }
             } else {
-                sendTextMessage(sender, db.store_name);
+                handleCreateShipback(sender, text);
             }
         }
     }
     res.sendStatus(200);
 });
-app.post('/shipbacks', async (req, res) => {
-    const { order_id } = req.body;
-    const data = await createShipback(order_id)
-    res.json(data);
-});
-const hasAvailable = (store) => {
-    return store == 'etam';
+// app.post('/shipbacks', async (req, res) => {
+//     const { name, sender } = req.body || {};
+//     const data_check = await fetchSessionSender(name, sender);
+//     const { step } = data_check;
+//     if(step == undefined) {
+//         const has_store_available = await hasAvailable(name);
+//         if(has_store_available) {
+//             const data = await insertOne("sessions",{ sender: sender, store_name: name, step: 1 });
+//             res.json(data);
+//         } else {
+//             res.json("Sorry, has not registed");
+//         }
+//     } else {
+//         handleCreateShipback(sender, text);
+//     }
+// });
+const hasAvailable = async (store) => {
+    const data = await fetchByField("stores", { name: store.trim() });
+    return data.length !== 0;
+};
+const fetchSessionSender = async (store_name, sender) => {
+    const data = await fetchByField("sessions", { store_name: store_name.trim(), sender});
+    return data;
+};
+const fetchById = (table, id) => {
+    const sql = `Select * From ${table} Where id=?`;
+    return new Promise(resolve => {
+        db.get(sql, [id], (err, data) => {
+            if (err) resolve(err);
+            if (data == undefined) resolve([]);
+            resolve(data);
+        });
+    });
+}
+const fetchByField = (table, object = {}, terminate = 'AND') => {
+    const { condition, values } = toCondition(object, terminate);
+    const sql = `Select * From ${table} Where ${condition}`;
+    return new Promise(resolve => {
+        db.get(sql, values, (err, data) => {
+            if (err) resolve(err);
+            if (data == undefined) resolve([]);
+            resolve(data);
+        });
+    });
+}
+const fetchAll = (table) => {
+    const sql = `Select * From ${table}`;
+    return new Promise(resolve => {
+        db.get(sql, [], (err, data) => {
+            if (err) resolve(err);
+            if (data == undefined) resolve([]);
+            resolve(data);
+        });
+    });
+}
+const insertAll = async (table, array_object = []) => {
+    let count = 0;
+    for (let object of array_object) {
+        await insertOne(table, object);
+        count++;
+        if(count == (array_object.length - 1)) return await insertOne(table, object);
+    }
+};
+
+const insertOne = (table, object = {}) => {
+    object.id = Math.ceil(Date.now() + Math.random());
+    const keys = fetchKeys(object);
+    const { values_string , values } = fetchValues(object);
+    const sql = `INSERT INTO ${table}(${keys}) Values ${values_string}`;
+    return new Promise(resolve => {
+        db.run(sql, values, function(err) {
+            if (err) resolve({ success: false, message: err });
+            resolve({ success: true, message: "success" });
+        });
+    });
+};
+
+const fetchValues = (object) => {
+    let values = [];
+    let values_question = [];
+    let values_string = '';
+    for( let key in object) {
+        values.push(object[key]);
+        values_question.push('?');
+    }
+    values_string = '(' + values_question.join(',') + ')';
+    return { values_string , values };
+};
+const fetchKeys = (object) => {
+    const keys = [];
+    for( let key in object) {
+        keys.push(key);
+    }
+    return keys.join(',');
+};
+
+const update = (table, conditions = {}) => {
+    const { condition, values } = toCondition(conditions);
+    let sql = `UPDATE ${table}
+            SET ${condition}
+            WHERE ${condition}`;
+    return new Promise(resolve => {
+        db.run(sql, values, function (err) {
+            if (err) {
+                resolve({ success: false });
+            }
+            resolve({ success: true });
+        });
+    });
+}
+const toCondition = (object, terminate = ",") => {
+    let condition = '';
+    let values = [];
+    let i = 0;
+    for (let key in object) {
+        condition = i == 0? `${condition} ${key}=?` : `${condition} ${terminate} ${key}=?`;
+        values.push(object[key]);
+        i++;
+    }
+    return { condition, values };
 };
 const handleCreateShipback = async (sender, text) => {
     const { shipback } = await createShipback(text);
-    if(shipback.error) {
+    if (shipback.error) {
         sendTextMessage(sender, 'Sorry, Your order number is not registed');
     } else {
         sendTemplate(sender, shipback.public_url);
@@ -82,7 +194,7 @@ function sendTemplate(sender, web_url) {
         recipient: {
             id: sender
         },
-        message:  {
+        message: {
             attachment: {
                 type: "template",
                 payload: {
@@ -112,7 +224,7 @@ const httpHeaderFB = (token = null) => {
 }
 
 const httpHeaderSRB = (token = null) => {
-    const headers = (token != null) ?{
+    const headers = (token != null) ? {
         'Content-Type': 'application/json',
         'Authorization': `Token token=${token}`
     } : { 'Content-Type': 'application/json' };
@@ -121,13 +233,12 @@ const httpHeaderSRB = (token = null) => {
 
 const httpPost = (short_url = '', payload, type = 'srb') => {
     const headers = { 'srb': httpHeaderSRB(auth_token), 'fb': httpHeaderFB(token) };
-    const url = {  'srb': `${dashboard_url}/${short_url}`, 'fb': `${fb_url}/${short_url}` };
+    const url = { 'srb': `${dashboard_url}/${short_url}`, 'fb': `${fb_url}/${short_url}` };
     return httpRequest(url[type], 'POST', payload, headers[type]);
 }
 
 const httpRequest = (url, method, json = {}, headers = {}) => {
-    return new Promise((resolve, reject) => 
-    { 
+    return new Promise((resolve, reject) => {
         request({
             url: `${url}`,
             method,
@@ -135,7 +246,7 @@ const httpRequest = (url, method, json = {}, headers = {}) => {
             qs: headers,
             json
         }, (error, response, body) => {
-            resolve(body);   
+            resolve(body);
         });
     });
 };
