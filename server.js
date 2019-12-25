@@ -30,7 +30,8 @@ app.post('/webhook/', async (req, res) => {
         var sender = event.sender.id;
         if (event.message && event.message.text) {
             var text = event.message.text;
-            sendTextMessage(sender, "Please enter your order number: ");
+            const is_ok = await hasAvailable(text);
+            sendTextMessage(sender, is_ok.toString());
             // const data_check = await fetchSessionSender(text, sender);
             // const { step } = data_check;
             // if(step == undefined) {
