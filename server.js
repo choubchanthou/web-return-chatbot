@@ -31,7 +31,7 @@ app.post('/webhook/', async (req, res) => {
         if (event.message && event.message.text) {
             var text = event.message.text;
             const is_ok = await fetchSessionSender(sender);
-            sendTextMessage(sender, is_ok);
+            sendTextMessage(sender, is_ok.length);
             // const data_check = await fetchSessionSender(text, sender);
             // const { step } = data_check;
             // if(step == undefined) {
@@ -49,22 +49,12 @@ app.post('/webhook/', async (req, res) => {
     }
     res.sendStatus(200);
 });
-// app.post('/shipbacks', async (req, res) => {
-//     const { name, sender } = req.body || {};
-//     const data_check = await fetchSessionSender(name, sender);
-//     const { step } = data_check;
-//     if(step == undefined) {
-//         const has_store_available = await hasAvailable(name);
-//         if(has_store_available) {
-//             const data = await insertOne("sessions",{ sender: sender, store_name: name, step: 1 });
-//             res.json(data);
-//         } else {
-//             res.json("Sorry, has not registed");
-//         }
-//     } else {
-//         handleCreateShipback(sender, text);
-//     }
-// });
+app.post('/shipbacks', async (req, res) => {
+    const { name, sender } = req.body || {};
+    const data_check = await fetchSessionSender(sender);
+    console.log(data_check);
+    res.json('test');
+});
 const hasAvailable = async (store) => {
     const data = await fetchByField("stores", { name: store.trim() });
     return data.length !== 0;
