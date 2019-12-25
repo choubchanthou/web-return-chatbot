@@ -42,8 +42,8 @@ app.post('/webhook/', async (req, res) => {
                 }
             } else {
                 if(data_check.step == 1) {
-                    sendTextMessage(sender, text);
-                    // handleCreateShipback(sender, text);
+                    // sendTextMessage(sender, text);
+                    handleCreateShipback(sender, text);
                 } else {
                     sendTextMessage(sender, "Please enter your store name: ");
                 }
@@ -164,11 +164,15 @@ const toCondition = (object, terminate = ",") => {
     return { condition, values };
 };
 const handleCreateShipback = async (sender, text) => {
-    const { shipback } = await createShipback(text);
-    if (shipback.error) {
-        sendTextMessage(sender, 'Sorry, Your order number is not registed');
-    } else {
-        sendTemplate(sender, shipback.public_url);
+    try {
+        const { shipback } = await createShipback(text);
+        if (shipback.error) {
+            sendTextMessage(sender, 'Sorry, Your order number is not registed');
+        } else {
+            sendTemplate(sender, shipback.public_url);
+        }
+    } catch (error) {
+        sendTextMessage(error);
     }
 };
 
