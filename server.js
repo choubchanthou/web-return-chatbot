@@ -31,7 +31,7 @@ app.post('/webhook/', async (req, res) => {
         if (event.message && event.message.text) {
             var text = event.message.text;
             const data_check = await fetchSessionSender(text, sender);
-            if(data_check.length == 0) {
+            if(data_check.length == 0 && data_check.step == undefined) {
                 sendTextMessage(sender, "Please enter your order number: ");
             }
             // if(step == undefined) {
