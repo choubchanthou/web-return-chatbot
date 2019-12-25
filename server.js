@@ -30,19 +30,20 @@ app.post('/webhook/', async (req, res) => {
         var sender = event.sender.id;
         if (event.message && event.message.text) {
             var text = event.message.text;
-            const data_check = await fetchSessionSender(text, sender);
-            const { step } = data_check;
-            if(step == undefined) {
-                const has_store_available = await hasAvailable(name);
-                if(has_store_available) {
-                    await insertOne("sessions",{ sender: sender, store_name: name, step: 1 });
-                    sendTextMessage(sender, "Please enter your order number: ");
-                } else {
-                    sendTextMessage(sender, "Sorry, your store has not registed. Please try again!");
-                }
-            } else {
-                handleCreateShipback(sender, text);
-            }
+            sendTextMessage(sender, "Please enter your order number: ");
+            // const data_check = await fetchSessionSender(text, sender);
+            // const { step } = data_check;
+            // if(step == undefined) {
+            //     const has_store_available = await hasAvailable(name);
+            //     if(has_store_available) {
+            //         await insertOne("sessions",{ sender: sender, store_name: name, step: 1 });
+            //         sendTextMessage(sender, "Please enter your order number: ");
+            //     } else {
+            //         sendTextMessage(sender, "Sorry, your store has not registed. Please try again!");
+            //     }
+            // } else {
+            //     handleCreateShipback(sender, text);
+            // }
         }
     }
     res.sendStatus(200);
