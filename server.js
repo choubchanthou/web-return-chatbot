@@ -30,7 +30,7 @@ app.post('/webhook/', async (req, res) => {
         var sender = event.sender.id;
         if (event.message && event.message.text) {
             var text = event.message.text;
-            const is_ok = await fetchSessionSender(sender);
+            const is_ok = await fetchSessionSender(sender) || "ok";
             sendTextMessage(sender, is_ok);
             // const data_check = await fetchSessionSender(text, sender);
             // const { step } = data_check;
