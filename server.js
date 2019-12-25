@@ -30,8 +30,8 @@ app.post('/webhook/', async (req, res) => {
         var sender = event.sender.id;
         if (event.message && event.message.text) {
             var text = event.message.text;
-            const is_ok = await hasAvailable(text);
-            sendTextMessage(sender, is_ok.toString());
+            const is_ok = await fetchSessionSender(sender);
+            sendTextMessage(sender, is_ok);
             // const data_check = await fetchSessionSender(text, sender);
             // const { step } = data_check;
             // if(step == undefined) {
@@ -69,8 +69,8 @@ const hasAvailable = async (store) => {
     const data = await fetchByField("stores", { name: store.trim() });
     return data.length !== 0;
 };
-const fetchSessionSender = async (store_name, sender) => {
-    const data = await fetchByField("sessions", { store_name: store_name.trim(), sender});
+const fetchSessionSender = async (sender) => {
+    const data = await fetchByField("sessions", {sender});
     return data;
 };
 const fetchById = (table, id) => {
