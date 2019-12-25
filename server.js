@@ -169,7 +169,8 @@ const handleCreateShipback = async (sender, text) => {
         if (shipback.errors) {
             sendTextMessage(sender, `Sorry, Your order number is not registed(${text})`);
         } else {
-            sendTemplate(sender, shipback.public_url);
+            sendTextMessage(sender, JSON.stringify(shipback));
+            // sendTemplate(sender, shipback.public_url);
         }
     } catch (error) {
         sendTextMessage(error);
