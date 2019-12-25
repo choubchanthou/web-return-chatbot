@@ -166,7 +166,7 @@ const toCondition = (object, terminate = ",") => {
 const handleCreateShipback = async (sender, text) => {
     try {
         const { shipback } = await createShipback(text);
-        sendTextMessage(JSON.stringify(shipback));
+        sendTextMessage(sender, JSON.stringify(shipback));
         // if (shipback.error) {
         //     sendTextMessage(sender, 'Sorry, Your order number is not registed');
         // } else {
