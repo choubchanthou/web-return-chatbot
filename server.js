@@ -30,11 +30,10 @@ app.post('/webhook/', async (req, res) => {
         var sender = event.sender.id;
         if (event.message && event.message.text) {
             var text = event.message.text;
-            const {step} = await fetchSessionSender(sender);
-            const test = step == undefined ? "test" : step;
-            sendTextMessage(sender, );
-            // const data_check = await fetchSessionSender(text, sender);
-            // const { step } = data_check;
+            const data_check = await fetchSessionSender(text, sender);
+            if(data_check.length == 0) {
+                sendTextMessage(sender, "Please enter your order number: ");
+            }
             // if(step == undefined) {
             //     const has_store_available = await hasAvailable(name);
             //     if(has_store_available) {
@@ -62,7 +61,7 @@ const hasAvailable = async (store) => {
 };
 const fetchSessionSender = async (sender) => {
     const data = await fetchByField("sessions", {sender});
-    return data.length == 0 ? { test: 'test' } : data;
+    return data;
 };
 const fetchById = (table, id) => {
     const sql = `Select * From ${table} Where id=?`;
