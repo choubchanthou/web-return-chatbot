@@ -31,7 +31,8 @@ app.post('/webhook/', async (req, res) => {
         if (event.message && event.message.text) {
             var text = event.message.text;
             const {step} = await fetchSessionSender(sender);
-            sendTextMessage(sender, step);
+            const test = step == undefined ? "test" : step;
+            sendTextMessage(sender, );
             // const data_check = await fetchSessionSender(text, sender);
             // const { step } = data_check;
             // if(step == undefined) {
