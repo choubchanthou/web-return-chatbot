@@ -42,7 +42,8 @@ app.post('/webhook/', async (req, res) => {
                 }
             } else {
                 if(data_check.step == 1) {
-                    handleCreateShipback(sender, text);
+                    sendTextMessage(sender, text);
+                    // handleCreateShipback(sender, text);
                 } else {
                     sendTextMessage(sender, "Please enter your store name: ");
                 }
