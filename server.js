@@ -211,7 +211,7 @@ const toCondition = (object, terminate = ",") => {
     }
     return { condition, values };
 };
-const sendTextMessage = async (sender, text) => {
+const sendTextMessage = (sender, text) => {
     var payload = {
         message: {
             text: text
@@ -220,7 +220,7 @@ const sendTextMessage = async (sender, text) => {
             id: sender
         },
     };
-    await httpPost('', payload, 'fb');
+    httpPost('', payload, 'fb');
     return { success: true };
 }
 
