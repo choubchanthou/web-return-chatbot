@@ -28,10 +28,11 @@ app.post('/webhook/', async (req, res) => {
     for (var i = 0; i < messaging_events.length; i++) {
         var event = req.body.entry[0].messaging[i];
         var sender = event.sender.id;
-        if (event.messages && event.message.text) {
+        if (event.message && event.message.text) {
             var text = event.message.text;
             const name = text.toLowerCase();
             const message = text.toLowerCase();
+            sendTextMessage(sender, JSON.stringify(event));
             if(message.length <= 0) return;
             const {step, order_id } = await fetchSessionSender(sender) || {};
             if(order_id !== undefined && order_id !== null) {
