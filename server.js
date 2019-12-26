@@ -35,15 +35,16 @@ app.post('/webhook/', async (req, res) => {
             if(message.length <= 0) return;
             const {step, order_id } = await fetchSessionSender(sender) || {};
             if(order_id !== undefined && order_id !== null) {
-                if(step == 2) {
+                if(step == 1) {
                     await sendTextMessage(sender, `You have an order(${order_id}) selected already!. Do you want to return new? [yes] = return new or [no] = current shipback `);
-                    await saveOrderIdBySender(sender, { order_id: null, step: 3 });
+                    await saveOrderIdBySender(sender, { order_id: null, step: 2 });
                     return;
                 }
                 if(message == 'yes'){
-                    await saveOrderIdBySender(sender, { order_id: null, step: 2 });
+                    await saveOrderIdBySender(sender, { order_id: null, step: 1 });
                     return await sendTextMessage(sender, "Please enter your order number: ");
                 } else if(message == 'no') {
+                    await saveOrderIdBySender(sender, { step: 1 });
                     return await sendMessagebyOrder(sender, order_id);
                 }   
             }
@@ -159,7 +160,7 @@ const sendMessagebyOrder = async (sender, order_id) => {
     const { shipback_id, is_order } = await hasAvailableOrder(order_id);
     if (shipback_id !== null) {
         const { public_url, charged, label_url } = await httpGet(`shipbacks/${shipback_id}`) || {};
-        await saveOrderIdBySender(sender, { order_id, step: 2 });
+        await saveOrderIdBySender(sender, { order_id, step: 1 });
         if(charged) {
             await sendMessageButton(sender, 'Tracking', 'Click to tracking your shipback', public_url);
             return await sendMessageButton(sender, 'Download Label', 'Your shipback already return!. Please download label below', label_url);
@@ -169,7 +170,7 @@ const sendMessagebyOrder = async (sender, order_id) => {
     }
     if (shipback_id == null && is_order == true) {
         const { shipback } = await createShipback(order_id);
-        await saveOrderIdBySender(sender, { order_id, step: 2 });
+        await saveOrderIdBySender(sender, { order_id, step: 1 });
         await sendTemplate(sender, shipback.public_url);
         return;
     }
