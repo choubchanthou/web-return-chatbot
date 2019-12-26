@@ -48,15 +48,15 @@ app.post('/webhook/', async (req, res) => {
                 const has_store_available = await hasAvailable(name);
                 if(has_store_available) {
                     await insertOne("sessions",{ sender: sender, store_name: name, step: 1 });
-                    sendTextMessage(sender, "Please enter your order number: ");
+                    await sendTextMessage(sender, "Please enter your order number: ");
                 } else {
-                    sendTextMessage(sender, "Sorry, your store has not registed. Please try again!");
+                    await sendTextMessage(sender, "Sorry, your store has not registed. Please try again!");
                 }
             } else {
                 if(step == 1) {
-                    sendMessagebyOrder(sender, text);
+                    await sendMessagebyOrder(sender, text);
                 } else {
-                    sendTextMessage(sender, "Please enter your store name: ");
+                    await sendTextMessage(sender, "Please enter your store name: ");
                 }
             }
         }
@@ -158,12 +158,11 @@ const sendMessagebyOrder = async (sender, order_id) => {
         const { public_url, charged, label_url } = await httpGet(`shipbacks/${shipback_id}`) || {};
         await saveOrderIdBySender(sender, order_id);
         if(charged) {
-            sendMessageButton(sender, 'Tracking', 'Click to tracking your shipback', public_url);
-            sendMessageButton(sender, 'Download Label', 'Your shipback already return!. Please download label below', label_url);
-            return;
+            await sendMessageButton(sender, 'Tracking', 'Click to tracking your shipback', public_url);
+            return await sendMessageButton(sender, 'Download Label', 'Your shipback already return!. Please download label below', label_url);
         }
-        sendTemplate(sender, public_url);
-        return;
+        return await sendTemplate(sender, public_url);
+        
     }
     if (shipback_id == null && is_order == true) {
         const { shipback } = await createShipback(order_id);
