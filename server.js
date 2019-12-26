@@ -32,6 +32,15 @@ app.post('/webhook/', async (req, res) => {
             var text = event.message.text;
             const name = text.toLowerCase();
             const {step, order_id } = await fetchSessionSender(sender) || {};
+            if(order_id !== undefined && order_id !== null) {
+                if (text !== 'hi') {
+                    sendTextMessage(sender, `You have an order(${order_id}) selected already!. Please say [hi] if you want to new return`);
+                    return await sendMessagebyOrder(sender, order_id);
+                } else {
+                    await saveOrderIdBySender(sender, null);
+                    sendTextMessage(sender, "Please enter your order number: ");
+                }
+            }
             if(step == undefined) {
                 const has_store_available = await hasAvailable(name);
                 if(has_store_available) {
@@ -52,7 +61,7 @@ app.post('/webhook/', async (req, res) => {
     res.sendStatus(200);
 });
 app.post('/shipbacks', async (req, res) => {
-    const data = await hasAvailable('eta');
+    const data = await update('sessions', { order_id: 124212}, { sender: 122 });
     res.json(data);
 });
 app.get('/orders/:id', async (req, res) => {
@@ -140,13 +149,46 @@ const fetchKeys = (object) => {
     return keys.join(',');
 };
 
-const update = (table, conditions = {}) => {
-    const { condition, values } = toCondition(conditions);
+const sendMessagebyOrder = async (sender, order_id) => {
+    const { shipback_id, is_order } = await hasAvailableOrder(order_id);
+    if (shipback_id !== null) {
+        const { public_url, charged, label_url } = await httpGet(`shipbacks/${shipback_id}`) || {};
+        if(charged) {
+            sendMessageButton(sender, 'Tracking', 'Click to tracking your shipback', public_url);
+            sendMessageButton(sender, 'Download Label', 'Your shipback already return!. Please download label below', label_url);
+            return;
+        }
+        sendTemplate(sender, public_url);
+        return;
+    }
+    if (shipback_id == null && is_order == true) {
+        const { shipback } = await createShipback(order_id);
+        saveOrderIdBySender(sender, order_id);
+        sendTemplate(sender, shipback.public_url);
+        return;
+    }
+    sendTextMessage(sender, "Sorry, your order has not registered. Please enter again");
+};
+const saveOrderIdBySender = async (sender, order_id) => {
+    const { success } = await update('sessions', { order_id }, { sender });
+    return success;
+};
+const hasAvailableOrder = async (order_id) => {
+    const order_url = `orders/${order_id}`;
+    const { shipback_id, id } = await httpGet(order_url) || {};
+    if(shipback_id !== undefined)  return { shipback_id };
+    if(id !== undefined && shipback_id == undefined) return { shipback_id: null, is_order: true };
+    return { shipback_id: null, is_order: false };
+};
+const update = (table, object = {}, conditions = {}) => {
+    const { condition, values } = toCondition(object);
+    const con = toCondition(conditions, 'AND');
+    const arr = values.concat(con.values);
     let sql = `UPDATE ${table}
             SET ${condition}
-            WHERE ${condition}`;
+            WHERE ${con.condition}`;
     return new Promise(resolve => {
-        db.run(sql, values, function (err) {
+        db.run(sql, arr, function (err) {
             if (err) {
                 resolve({ success: false });
             }
@@ -165,33 +207,6 @@ const toCondition = (object, terminate = ",") => {
     }
     return { condition, values };
 };
-const sendMessagebyOrder = async (sender, order_id) => {
-    const { shipback_id, is_order } = await hasAvailableOrder(order_id);
-    if (shipback_id !== null) {
-        const { public_url, charged, label_url } = await httpGet(`shipbacks/${shipback_id}`) || {};
-        if(charged) {
-            sendMessageButton(sender, 'Tracking', 'Click to tracking your shipback', public_url);
-            sendMessageButton(sender, 'Download Label', 'Your shipback already return!. Please download label below', label_url);
-            return;
-        }
-        sendTemplate(sender, public_url);
-        return;
-    }
-    if (shipback_id == null && is_order == true) {
-        const { shipback } = await createShipback(order_id);
-        sendTemplate(sender, shipback.public_url);
-        return;
-    }
-    sendTextMessage(sender, "Sorry, your order has not registered. Please enter again");
-};
-const hasAvailableOrder = async (order_id) => {
-    const order_url = `orders/${order_id}`;
-    const { shipback_id, id } = await httpGet(order_url) || {};
-    if(shipback_id !== undefined)  return { shipback_id };
-    if(id !== undefined && shipback_id == undefined) return { shipback_id: null, is_order: true };
-    return { shipback_id: null, is_order: false };
-};
-
 function sendTextMessage(sender, text) {
     var payload = {
         message: {
