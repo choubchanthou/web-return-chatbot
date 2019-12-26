@@ -167,10 +167,10 @@ const sendMessagebyOrder = async (sender, order_id) => {
     if (shipback_id == null && is_order == true) {
         const { shipback } = await createShipback(order_id);
         await saveOrderIdBySender(sender, order_id);
-        sendTemplate(sender, shipback.public_url);
+        await sendTemplate(sender, shipback.public_url);
         return;
     }
-    sendTextMessage(sender, "Sorry, your order has not registered. Please enter again");
+    await sendTextMessage(sender, "Sorry, your order has not registered. Please enter again");
 };
 const saveOrderIdBySender = async (sender, order_id) => {
     const { success } = await update('sessions', { order_id }, { sender });
@@ -219,7 +219,8 @@ const sendTextMessage = async (sender, text) => {
             id: sender
         },
     };
-    return await httpPost('', payload, 'fb');
+    await httpPost('', payload, 'fb');
+    return { success: true };
 }
 
 const sendTemplate = async (sender, web_url) => {
@@ -244,7 +245,8 @@ const sendTemplate = async (sender, web_url) => {
             }
         }
     };
-    return await httpPost('', payload, 'fb');
+    await httpPost('', payload, 'fb');
+    return { success: true };
 }
 
 const sendMessageButton = async (sender, title, message, web_url) => {
@@ -267,7 +269,8 @@ const sendMessageButton = async (sender, title, message, web_url) => {
           }
         }
     }};
-    return await httpPost('', payload, 'fb');
+    await httpPost('', payload, 'fb');
+    return { success: true };
 };
 
 const createShipback = async (order_id) => {
