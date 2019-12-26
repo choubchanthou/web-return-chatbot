@@ -36,7 +36,7 @@ app.post('/webhook/', async (req, res) => {
                 if (text !== 'hi') {
                     sendTextMessage(sender, `You have an order(${order_id}) selected already!. Please say [hi] if you want to new return`);
                     return await sendMessagebyOrder(sender, order_id);
-                } else {
+                } else if(text.toLowerCase() == 'hi'){
                     await saveOrderIdBySender(sender, null);
                     sendTextMessage(sender, "Please enter your order number: ");
                     return;
