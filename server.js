@@ -34,31 +34,32 @@ app.post('/webhook/', async (req, res) => {
             const message = text.toLowerCase();
             if(message.length <= 0) return;
             const {step, order_id } = await fetchSessionSender(sender) || {};
-            if(order_id !== undefined && order_id !== null) {
-                if(message == 'hi'){
-                    await saveOrderIdBySender(sender, null);
-                    return await sendTextMessage(sender, "Please enter your order number: ");
-                }
-                if (message != 'hi') {
-                    await sendTextMessage(sender, `You have an order(${order_id}) selected already!. Please say [hi] if you want to new return`);
-                    return await sendMessagebyOrder(sender, order_id);
-                }  
-            }
-            if(step == undefined) {
-                const has_store_available = await hasAvailable(name);
-                if(has_store_available) {
-                    await insertOne("sessions",{ sender: sender, store_name: name, step: 1 });
-                    await sendTextMessage(sender, "Please enter your order number: ");
-                } else {
-                    await sendTextMessage(sender, "Sorry, your store has not registed. Please try again!");
-                }
-            } else {
-                if(step == 1) {
-                    await sendMessagebyOrder(sender, text);
-                } else {
-                    await sendTextMessage(sender, "Please enter your store name: ");
-                }
-            }
+            sendTextMessage(sender, 'test');
+            // if(order_id !== undefined && order_id !== null) {
+            //     if(message == 'hi'){
+            //         await saveOrderIdBySender(sender, null);
+            //         return await sendTextMessage(sender, "Please enter your order number: ");
+            //     }
+            //     if (message != 'hi') {
+            //         await sendTextMessage(sender, `You have an order(${order_id}) selected already!. Please say [hi] if you want to new return`);
+            //         return await sendMessagebyOrder(sender, order_id);
+            //     }  
+            // }
+            // if(step == undefined) {
+            //     const has_store_available = await hasAvailable(name);
+            //     if(has_store_available) {
+            //         await insertOne("sessions",{ sender: sender, store_name: name, step: 1 });
+            //         await sendTextMessage(sender, "Please enter your order number: ");
+            //     } else {
+            //         await sendTextMessage(sender, "Sorry, your store has not registed. Please try again!");
+            //     }
+            // } else {
+            //     if(step == 1) {
+            //         await sendMessagebyOrder(sender, text);
+            //     } else {
+            //         await sendTextMessage(sender, "Please enter your store name: ");
+            //     }
+            // }
         }
     }
     res.sendStatus(200);
