@@ -33,10 +33,13 @@ app.post('/webhook/', async (req, res) => {
             const name = text.toLowerCase();
             const {step, order_id } = await fetchSessionSender(sender) || {};
             if(order_id !== undefined && order_id !== null) {
-                if (text !== 'hi') {
+                const message = text.toLowerCase();
+                if(message.length <= 0) return;
+                if (message !== 'hi') {
                     sendTextMessage(sender, `You have an order(${order_id}) selected already!. Please say [hi] if you want to new return`);
                     return await sendMessagebyOrder(sender, order_id);
-                } else if(text.toLowerCase() == 'hi'){
+                }  
+                if(message == 'hi'){
                     await saveOrderIdBySender(sender, null);
                     sendTextMessage(sender, "Please enter your order number: ");
                     return;
