@@ -35,10 +35,7 @@ app.post('/webhook/', async (req, res) => {
             if(message.length <= 0) return;
             const {step, order_id } = await fetchSessionSender(sender) || {};
             if(order_id !== undefined && order_id !== null) {
-                // if(event.message.text) {
-                //     await sendTextMessage(sender, `You have an order(${order_id}) selected already!. Do you want to return new? [yes] = return new or [no] = current shipback `);
-                //     return;
-                // }
+                sendTextMessage(sender, `You have an order(${order_id}) selected already!. Do you want to return new? [yes] = return new or [no] = current shipback `);
                 if(message == 'yes'){
                     await saveOrderIdBySender(sender, null);
                     return await sendTextMessage(sender, "Please enter your order number: ");
