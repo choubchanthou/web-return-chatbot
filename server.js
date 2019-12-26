@@ -32,8 +32,8 @@ app.post('/webhook/', async (req, res) => {
             var text = event.message.text;
             const name = text.toLowerCase();
             const message = text.toLowerCase();
-            if(message.length <= 0) return;
-            const {step, order_id } = await fetchSessionSender(sender) || {};
+            // if(message.length <= 0) return;
+            // const {step, order_id } = await fetchSessionSender(sender) || {};
             sendTextMessage(sender, 'test');
             // if(order_id !== undefined && order_id !== null) {
             //     if(message == 'hi'){
