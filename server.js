@@ -60,7 +60,7 @@ app.post('/webhook/', async (req, res) => {
                 if(step == 1) {
                     await sendMessagebyOrder(sender, text);
                 }else {
-                    sendTextMessage(sender, order_id);
+                    sendTextMessage(sender, "test");
                 }
             }
         }
