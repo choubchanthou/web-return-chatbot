@@ -46,7 +46,8 @@ app.post('/webhook/', async (req, res) => {
                 } else if(message == 'no') {
                     await saveOrderIdBySender(sender, { step: 1 });
                     return await sendMessagebyOrder(sender, order_id);
-                }   
+                } 
+                return;  
             }
             if(step == undefined) {
                 const has_store_available = await hasAvailable(name);
