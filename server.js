@@ -154,6 +154,7 @@ const sendMessagebyOrder = async (sender, order_id) => {
     const { shipback_id, is_order } = await hasAvailableOrder(order_id);
     if (shipback_id !== null) {
         const { public_url, charged, label_url } = await httpGet(`shipbacks/${shipback_id}`) || {};
+        await saveOrderIdBySender(sender, order_id);
         if(charged) {
             sendMessageButton(sender, 'Tracking', 'Click to tracking your shipback', public_url);
             sendMessageButton(sender, 'Download Label', 'Your shipback already return!. Please download label below', label_url);
@@ -164,7 +165,7 @@ const sendMessagebyOrder = async (sender, order_id) => {
     }
     if (shipback_id == null && is_order == true) {
         const { shipback } = await createShipback(order_id);
-        saveOrderIdBySender(sender, order_id);
+        await saveOrderIdBySender(sender, order_id);
         sendTemplate(sender, shipback.public_url);
         return;
     }
