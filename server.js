@@ -171,12 +171,19 @@ const toCondition = (object, terminate = ",") => {
 const sendMessagebyOrder = async (sender, order_id) => {
     const { shipback_id, is_order } = await hasAvailableOrder(order_id);
     if (shipback_id !== null) {
-        const { public_url } = await httpGet(`shipbacks/${shipback_id}`) || {};
+        const { public_url, charged, label_url } = await httpGet(`shipbacks/${shipback_id}`) || {};
+        if(charged) {
+            sendMessageButton(sender, 'Tracking', 'Click to tracking your shipback', public_url);
+            sendMessageButton(sender, 'Download Label', 'Your shipback already return!. Please download label below', label_url);
+            return;
+        }
         sendTemplate(sender, public_url);
+        return;
     }
     if (shipback_id == null && is_order == true) {
         const { shipback } = await createShipback(order_id);
         sendTemplate(sender, shipback.public_url);
+        return;
     }
     sendTextMessage(sender, "Sorry, your order has not registered. Please enter again");
 };
@@ -224,6 +231,29 @@ function sendTemplate(sender, web_url) {
     };
     httpPost('', payload, 'fb');
 }
+
+const sendMessageButton = (sender, title, message, web_url) => {
+    const payload = {"recipient":{
+        "id": sender
+      },
+      "message":{
+        "attachment":{
+          "type":"template",
+          "payload":{
+            "template_type":"button",
+            "text": message,
+            "buttons":[
+              {
+                "type":"web_url",
+                "url": web_url,
+                "title": title
+              }
+            ]
+          }
+        }
+    }};
+    httpPost('', payload, 'fb');
+};
 
 const createShipback = async (order_id) => {
     const payload = { order_id };
