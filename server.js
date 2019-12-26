@@ -39,6 +39,7 @@ app.post('/webhook/', async (req, res) => {
                 } else {
                     await saveOrderIdBySender(sender, null);
                     sendTextMessage(sender, "Please enter your order number: ");
+                    return;
                 }
             }
             if(step == undefined) {
