@@ -35,9 +35,13 @@ app.post('/webhook/', async (req, res) => {
             if(message.length <= 0) return;
             const {step, order_id } = await fetchSessionSender(sender) || {};
             if(order_id !== undefined && order_id !== null) {
-                sendTextMessage(sender, `You have an order(${order_id}) selected already!. Do you want to return new? [yes] = return new or [no] = current shipback `);
+                if(step == 2) {
+                    await sendTextMessage(sender, `You have an order(${order_id}) selected already!. Do you want to return new? [yes] = return new or [no] = current shipback `);
+                    await saveOrderIdBySender(sender, { order_id: null, step: 3 });
+                    return;
+                }
                 if(message == 'yes'){
-                    await saveOrderIdBySender(sender, null);
+                    await saveOrderIdBySender(sender, { order_id: null, step: 2 });
                     return await sendTextMessage(sender, "Please enter your order number: ");
                 } else if(message == 'no') {
                     return await sendMessagebyOrder(sender, order_id);
@@ -155,7 +159,7 @@ const sendMessagebyOrder = async (sender, order_id) => {
     const { shipback_id, is_order } = await hasAvailableOrder(order_id);
     if (shipback_id !== null) {
         const { public_url, charged, label_url } = await httpGet(`shipbacks/${shipback_id}`) || {};
-        await saveOrderIdBySender(sender, order_id);
+        await saveOrderIdBySender(sender, { order_id, step: 2 });
         if(charged) {
             await sendMessageButton(sender, 'Tracking', 'Click to tracking your shipback', public_url);
             return await sendMessageButton(sender, 'Download Label', 'Your shipback already return!. Please download label below', label_url);
@@ -165,14 +169,14 @@ const sendMessagebyOrder = async (sender, order_id) => {
     }
     if (shipback_id == null && is_order == true) {
         const { shipback } = await createShipback(order_id);
-        await saveOrderIdBySender(sender, order_id);
+        await saveOrderIdBySender(sender, { order_id, step: 2 });
         await sendTemplate(sender, shipback.public_url);
         return;
     }
     await sendTextMessage(sender, "Sorry, your order has not registered. Please enter again");
 };
-const saveOrderIdBySender = async (sender, order_id) => {
-    const { success } = await update('sessions', { order_id }, { sender });
+const saveOrderIdBySender = async (sender, object = {}) => {
+    const { success } = await update('sessions', object, { sender });
     return success;
 };
 const hasAvailableOrder = async (order_id) => {
