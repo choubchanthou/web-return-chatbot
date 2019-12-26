@@ -41,13 +41,10 @@ app.post('/webhook/', async (req, res) => {
                     sendTextMessage(sender, "Sorry, your store has not registed. Please try again!");
                 }
             } else {
-                const has_store_available = await hasAvailable(name);
-                if(has_store_available) {
-                    if(step == 1) {
-                        sendMessagebyOrder(sender, text);
-                    } else {
-                        sendTextMessage(sender, "Please enter your store name: ");
-                    }
+                if(step == 1) {
+                    sendMessagebyOrder(sender, text);
+                } else {
+                    sendTextMessage(sender, "Please enter your store name: ");
                 }
             }
         }
@@ -55,11 +52,8 @@ app.post('/webhook/', async (req, res) => {
     res.sendStatus(200);
 });
 app.post('/shipbacks', async (req, res) => {
-    const { name, sender } = req.body || {};
-    const { shipback } = await createShipback(name);
-    const {errors} = shipback;
-    const str = errors.toString(); 
-    res.json(str);
+    const data = await hasAvailable('eta');
+    res.json(data);
 });
 app.get('/orders/:id', async (req, res) => {
     const { id } = req.params || {};
@@ -67,8 +61,8 @@ app.get('/orders/:id', async (req, res) => {
     res.json(shipback_id);
 });
 const hasAvailable = async (store) => {
-    const data = await fetchByField("stores", { name: store.trim() });
-    return data.length !== 0;
+    const {error} = await fetchByField("stores", { name: store }) || {};
+    return error ? false: true;
 };
 const fetchSessionSender = async (sender) => {
     const data = await fetchByField("sessions", {sender});
