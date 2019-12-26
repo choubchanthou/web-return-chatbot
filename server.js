@@ -31,8 +31,8 @@ app.post('/webhook/', async (req, res) => {
         if (event.message && event.message.text) {
             var text = event.message.text;
             const name = text.toLowerCase();
-            const data_check = await fetchSessionSender(sender);
-            if(data_check.step == undefined) {
+            const {step, order_id } = await fetchSessionSender(sender) || {};
+            if(step == undefined) {
                 const has_store_available = await hasAvailable(name);
                 if(has_store_available) {
                     await insertOne("sessions",{ sender: sender, store_name: name, step: 1 });
@@ -41,10 +41,13 @@ app.post('/webhook/', async (req, res) => {
                     sendTextMessage(sender, "Sorry, your store has not registed. Please try again!");
                 }
             } else {
-                if(data_check.step == 1) {
-                    sendMessagebyOrder(sender, text);
-                } else {
-                    sendTextMessage(sender, "Please enter your store name: ");
+                const has_store_available = await hasAvailable(name);
+                if(has_store_available) {
+                    if(step == 1) {
+                        sendMessagebyOrder(sender, text);
+                    } else {
+                        sendTextMessage(sender, "Please enter your store name: ");
+                    }
                 }
             }
         }
