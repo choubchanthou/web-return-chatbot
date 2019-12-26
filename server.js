@@ -59,8 +59,6 @@ app.post('/webhook/', async (req, res) => {
             } else {
                 if(step == 1) {
                     await sendMessagebyOrder(sender, text);
-                } else {
-                    await sendTextMessage(sender, "Please enter your store name: ");
                 }
             }
         }
