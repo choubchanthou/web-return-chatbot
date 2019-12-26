@@ -42,8 +42,7 @@ app.post('/webhook/', async (req, res) => {
                 }
             } else {
                 if(data_check.step == 1) {
-                    // sendTextMessage(sender, text);
-                    handleCreateShipback(sender, text);
+                    sendMessagebyOrder(sender, text);
                 } else {
                     sendTextMessage(sender, "Please enter your store name: ");
                 }
@@ -54,9 +53,15 @@ app.post('/webhook/', async (req, res) => {
 });
 app.post('/shipbacks', async (req, res) => {
     const { name, sender } = req.body || {};
-    const { shipback } = await createShipback('12312');
-    console.log(shipback);
-    res.json(shipback);
+    const { shipback } = await createShipback(name);
+    const {errors} = shipback;
+    const str = errors.toString(); 
+    res.json(str);
+});
+app.get('/orders/:id', async (req, res) => {
+    const { id } = req.params || {};
+    const shipback_id = await fetchShipbackByOrder(id);
+    res.json(shipback_id);
 });
 const hasAvailable = async (store) => {
     const data = await fetchByField("stores", { name: store.trim() });
@@ -163,18 +168,24 @@ const toCondition = (object, terminate = ",") => {
     }
     return { condition, values };
 };
-const handleCreateShipback = async (sender, text) => {
-    try {
-        const { shipback } = await createShipback(text);
-        if (shipback.errors) {
-            sendTextMessage(sender, `Sorry, Your order number is not registed(${text})`);
-        } else {
-            sendTextMessage(sender, JSON.stringify(shipback));
-            // sendTemplate(sender, shipback.public_url);
-        }
-    } catch (error) {
-        sendTextMessage(error);
+const sendMessagebyOrder = async (sender, order_id) => {
+    const { shipback_id, is_order } = await hasAvailableOrder(order_id);
+    if (shipback_id !== null) {
+        const { public_url } = await httpGet(`shipbacks/${shipback_id}`) || {};
+        sendTemplate(sender, public_url);
     }
+    if (shipback_id == null && is_order == true) {
+        const { shipback } = await createShipback(order_id);
+        sendTemplate(sender, shipback.public_url);
+    }
+    sendTextMessage(sender, "Sorry, your order has not registered. Please enter again");
+};
+const hasAvailableOrder = async (order_id) => {
+    const order_url = `orders/${order_id}`;
+    const { shipback_id, id } = await httpGet(order_url) || {};
+    if(shipback_id !== undefined)  return { shipback_id };
+    if(id !== undefined && shipback_id == undefined) return { shipback_id: null, is_order: true };
+    return { shipback_id: null, is_order: false };
 };
 
 function sendTextMessage(sender, text) {
@@ -231,11 +242,16 @@ const httpHeaderSRB = (token = null) => {
     return headers;
 }
 
-const httpPost = (short_url = '', payload, type = 'srb') => {
+const httpPost = async (short_url = '', payload, type = 'srb') => {
     const headers = { 'srb': httpHeaderSRB(auth_token), 'fb': httpHeaderFB(token) };
     const url = { 'srb': `${dashboard_url}/${short_url}`, 'fb': `${fb_url}/${short_url}` };
-    return httpRequest(url[type], 'POST', payload, headers[type]);
+    return await httpRequest(url[type], 'POST', payload, headers[type]);
 }
+const httpGet = async (short_url = '', type = 'srb') => {
+    const headers = { 'srb': httpHeaderSRB(auth_token), 'fb': httpHeaderFB(token) };
+    const url = { 'srb': `${dashboard_url}/${short_url}`, 'fb': `${fb_url}/${short_url}` };
+    return await httpRequest(url[type],'GET',{}, headers[type]);
+};
 
 const httpRequest = (url, method, json = {}, headers = {}) => {
     return new Promise((resolve, reject) => {
@@ -246,6 +262,7 @@ const httpRequest = (url, method, json = {}, headers = {}) => {
             qs: headers,
             json
         }, (error, response, body) => {
+            if(error) resolve(error);
             resolve(body);
         });
     });
