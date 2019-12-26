@@ -31,19 +31,18 @@ app.post('/webhook/', async (req, res) => {
         if (event.message && event.message.text) {
             var text = event.message.text;
             const name = text.toLowerCase();
+            const message = text.toLowerCase();
+            if(message.length <= 0) return;
             const {step, order_id } = await fetchSessionSender(sender) || {};
             if(order_id !== undefined && order_id !== null) {
-                const message = text.toLowerCase();
-                if(message.length <= 0) return;
-                if (message !== 'hi') {
-                    sendTextMessage(sender, `You have an order(${order_id}) selected already!. Please say [hi] if you want to new return`);
-                    return await sendMessagebyOrder(sender, order_id);
-                }  
                 if(message == 'hi'){
                     await saveOrderIdBySender(sender, null);
-                    sendTextMessage(sender, "Please enter your order number: ");
-                    return;
+                    return await sendTextMessage(sender, "Please enter your order number: ");
                 }
+                if (message != 'hi') {
+                    await sendTextMessage(sender, `You have an order(${order_id}) selected already!. Please say [hi] if you want to new return`);
+                    return await sendMessagebyOrder(sender, order_id);
+                }  
             }
             if(step == undefined) {
                 const has_store_available = await hasAvailable(name);
@@ -212,7 +211,7 @@ const toCondition = (object, terminate = ",") => {
     }
     return { condition, values };
 };
-function sendTextMessage(sender, text) {
+const sendTextMessage = async (sender, text) => {
     var payload = {
         message: {
             text: text
@@ -221,10 +220,10 @@ function sendTextMessage(sender, text) {
             id: sender
         },
     };
-    httpPost('', payload, 'fb');
+    return await httpPost('', payload, 'fb');
 }
 
-function sendTemplate(sender, web_url) {
+const sendTemplate = async (sender, web_url) => {
     const payload = {
         recipient: {
             id: sender
@@ -246,10 +245,10 @@ function sendTemplate(sender, web_url) {
             }
         }
     };
-    httpPost('', payload, 'fb');
+    return await httpPost('', payload, 'fb');
 }
 
-const sendMessageButton = (sender, title, message, web_url) => {
+const sendMessageButton = async (sender, title, message, web_url) => {
     const payload = {"recipient":{
         "id": sender
       },
@@ -269,7 +268,7 @@ const sendMessageButton = (sender, title, message, web_url) => {
           }
         }
     }};
-    httpPost('', payload, 'fb');
+    return await httpPost('', payload, 'fb');
 };
 
 const createShipback = async (order_id) => {
