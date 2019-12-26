@@ -39,8 +39,8 @@ app.post('/webhook/', async (req, res) => {
                     await saveOrderIdBySender(sender, null);
                     return await sendTextMessage(sender, "Please enter your order number: ");
                 }
-                await sendTextMessage(sender, `You have an order(${order_id}) selected already!. Please say [hi] if you want to new return`);
-                return await sendMessagebyOrder(sender, order_id);
+                // await sendTextMessage(sender, `You have an order(${order_id}) selected already!. Please say [hi] if you want to new return`);
+                // return await sendMessagebyOrder(sender, order_id);
             }
             if(step == undefined) {
                 const has_store_available = await hasAvailable(name);
