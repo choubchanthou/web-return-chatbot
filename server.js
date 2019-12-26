@@ -221,7 +221,6 @@ const sendTextMessage = (sender, text) => {
         },
     };
     httpPost('', payload, 'fb');
-    return { success: true };
 }
 
 const sendTemplate = async (sender, web_url) => {
