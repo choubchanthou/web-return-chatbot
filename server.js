@@ -32,7 +32,7 @@ app.post('/webhook/', async (req, res) => {
             var text = event.message.text;
             const name = text.toLowerCase();
             const message = text.toLowerCase();
-            const {step, order_id } = await fetchSessionSender(sender) || {};
+            var {step, order_id } = await fetchSessionSender(sender) || {};
             if(step == undefined) {
                 const has_store_available = await hasAvailable(name);
                 if(has_store_available) {
