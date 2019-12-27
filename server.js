@@ -117,16 +117,12 @@ const hasAllRef = async (sender, store, order_id) => {
             if (!is_avail) return await sendTextMessage(sender, `Sorry, your store(${store}) has not registed. Please try again!`);
             if (store_name == undefined && order_id == undefined) {
                 await insertOne("sessions", { sender, store_name: store, order_id, step: 1 });
-                await sendTextMessage(sender, 'test1');
             } else {
                 await saveOrderIdBySender(sender, { store_name: store, order_id, step: 1 });
-                await sendTextMessage(sender, 'test2');
             }
             const has_selected_order = await hasSelectedOrder(sender, order_id, order_id);
-            await sendTextMessage(sender, 'test3');
             if (has_selected_order) return true;
             if (step == 1) { 
-                await sendTextMessage(sender, 'test4');
                 return await sendMessagebyOrder(sender, order_id);
             }
         }
