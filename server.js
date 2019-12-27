@@ -72,7 +72,7 @@ const hasSelectedOrder = async (sender, order_id, step, message) => {
             return true;
         }
         if(message == 'yes'){
-            await saveOrderIdBySender(sender, { order_id: null, step: 1 });
+            // await saveOrderIdBySender(sender, { order_id: null, step: 1 });
             await sendTextMessage(sender, "Please enter your order number: ");
             return true;
         } else if(message == 'no') {
