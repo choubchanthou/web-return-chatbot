@@ -54,6 +54,9 @@ app.post('/webhook/', async (req, res) => {
         }else if(event.postback) {
            await handlePostBack(sender, event.postback);
            break;
+        } else if(event.referral) {
+            await handleMessagingRef(sender, event.referral);
+           break;
         }
     }
     res.sendStatus(200);
@@ -70,6 +73,9 @@ app.get('/orders/:id', async (req, res) => {
 const handlePostBack = async (sender, postback) => {
     return await sendTextMessage(sender, JSON.stringify(postback));
 };
+const handleMessagingRef = async (sender, referral) => {
+    return await sendTextMessage(sender, JSON.stringify(referral));
+}
 const hasSelectedOrder = async (sender, order_id, step, message) => {
     if(order_id !== undefined && order_id !== null) {
         if(message == 'hi'){
