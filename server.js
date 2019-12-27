@@ -43,7 +43,7 @@ app.post('/webhook/', async (req, res) => {
                 }
             } else {
                 try {
-                    const has_selected_order = await hasSelectedOrder(sender, order_id, step);
+                    const has_selected_order = await hasSelectedOrder(sender, order_id, step, message);
                     if (has_selected_order) return;
                     if(step == 1) await sendMessagebyOrder(sender, text);
                 } catch(err) {
