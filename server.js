@@ -146,7 +146,7 @@ const separateRef = (ref) => {
 const hasSelectedOrder = async (sender, order_id, message) => {
     if (order_id !== undefined && order_id !== null) {
         if (message == 'new') {
-            await saveOrderIdBySender(sender, { order_id: null });
+            await saveOrderIdBySender(sender, { order_id: null, step: 0 });
             await sendTextMessage(sender, "Please enter your order number: ");
             return true;
         }
