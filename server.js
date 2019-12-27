@@ -76,6 +76,7 @@ app.get('/orders/:id', async (req, res) => {
 });
 const handlePostBack = async (sender, postback) => {
     const { referral } = postback || {};
+    await sendTextMessage(sender, JSON.stringify(referral));
     const { ref } = referral || {};
     const { store, order_id } = separateRef(ref) || { store: null, order_id: null };
     if (await hasNotRef(sender, store, order_id) != false) return true;
