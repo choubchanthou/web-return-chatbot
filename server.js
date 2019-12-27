@@ -32,7 +32,7 @@ app.post('/webhook/', async (req, res) => {
             var text = event.message.text;
             const name = text.toLowerCase();
             const message = text.toLowerCase();
-            var {step, order_id } = await fetchSessionSender(sender) || {};
+            const {step, order_id } = await fetchSessionSender(sender) || {};
             if(step == undefined) {
                 const has_store_available = await hasAvailable(name);
                 if(has_store_available) {
@@ -43,7 +43,7 @@ app.post('/webhook/', async (req, res) => {
                 }
             } else {
                 try {
-                    const has_selected_order = await hasSelectedOrder(sender, order_id);
+                    const has_selected_order = await hasSelectedOrder(sender, order_id, step);
                     if (has_selected_order) return;
                     if(step == 1) await sendMessagebyOrder(sender, text);
                 } catch(err) {
@@ -63,7 +63,7 @@ app.get('/orders/:id', async (req, res) => {
     const shipback_id = await fetchShipbackByOrder(id);
     res.json(shipback_id);
 });
-const hasSelectedOrder = async (sender, order_id) => {
+const hasSelectedOrder = async (sender, order_id, step) => {
     if(order_id !== undefined && order_id !== null) {
         if(step == 1) {
             await sendTextMessage(sender, `You have an order(${order_id}) selected already!. Do you want to return new? [yes] = return new or [no] = current shipback `);
