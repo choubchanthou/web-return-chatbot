@@ -51,6 +51,9 @@ app.post('/webhook/', async (req, res) => {
                     break;
                 }
             }
+        }else if(event.postback) {
+           await handlePostBack(sender, event.postback);
+           break;
         }
     }
     res.sendStatus(200);
@@ -64,6 +67,9 @@ app.get('/orders/:id', async (req, res) => {
     const shipback_id = await fetchShipbackByOrder(id);
     res.json(shipback_id);
 });
+const handlePostBack = async (sender, postback) => {
+    return await sendTextMessage(sender, JSON.stringify(postback));
+};
 const hasSelectedOrder = async (sender, order_id, step, message) => {
     if(order_id !== undefined && order_id !== null) {
         if(message == 'hi'){
