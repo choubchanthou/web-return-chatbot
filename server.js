@@ -33,7 +33,7 @@ app.post('/webhook/', async (req, res) => {
             const name = text.toLowerCase();
             const message = text.toLowerCase();
             const {step, order_id } = await fetchSessionSender(sender) || {};
-            if(step == undefined) {
+            if(step == undefined || step == 0) {
                 const has_store_available = await hasAvailable(name);
                 if(has_store_available) {
                     await insertOne("sessions",{ sender: sender, store_name: name, step: 1 });
@@ -44,12 +44,11 @@ app.post('/webhook/', async (req, res) => {
                     break;
                 }
             } else {
-                try {
-                    const has_selected_order = await hasSelectedOrder(sender, order_id, step, message);
-                    if (has_selected_order) break;
-                    if(step == 1) await sendMessagebyOrder(sender, text);
-                } catch(err) {
-                    sendTextMessage(sender, err.toString());
+                const has_selected_order = await hasSelectedOrder(sender, order_id, step, message);
+                if (has_selected_order) break;
+                if(step == 1) {
+                    await sendMessagebyOrder(sender, text);
+                    break;
                 }
             }
         }
@@ -67,22 +66,14 @@ app.get('/orders/:id', async (req, res) => {
 });
 const hasSelectedOrder = async (sender, order_id, step, message) => {
     if(order_id !== undefined && order_id !== null) {
-        await sendTextMessage(sender, message); 
-        if(step == 1) {
-            await sendTextMessage(sender, `You have an order(${order_id}) selected already!. Do you want to return new? [yes] = return new or [no] = current shipback `);
-            await saveOrderIdBySender(sender, { step: 2 });
-            return true;
-        }
-        if(message == 'yes'){
-            await saveOrderIdBySender(sender, { order_id: null, step: 1 });
+        if(message == 'hi'){
+            await saveOrderIdBySender(sender, { order_id: null });
             await sendTextMessage(sender, "Please enter your order number: ");
             return true;
-        } else if(message == 'no') {
-            await saveOrderIdBySender(sender, { step: 1 });
-            await sendMessagebyOrder(sender, order_id);
-            return true;
         }
-        return true;  
+        await sendTextMessage(sender, `You have an order(${order_id}) selected already!. Please say [hi] to new return`);
+        await sendMessagebyOrder(sender, order_id);
+        return true;
     }
     return false;
 };
