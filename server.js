@@ -38,13 +38,15 @@ app.post('/webhook/', async (req, res) => {
                 if(has_store_available) {
                     await insertOne("sessions",{ sender: sender, store_name: name, step: 1 });
                     await sendTextMessage(sender, "Please enter your order number: ");
+                    break;
                 } else {
                     await sendTextMessage(sender, "Sorry, your store has not registed. Please try again!");
+                    break;
                 }
             } else {
                 try {
                     const has_selected_order = await hasSelectedOrder(sender, order_id, step, message);
-                    if (has_selected_order) return;
+                    if (has_selected_order) break;
                     if(step == 1) await sendMessagebyOrder(sender, text);
                 } catch(err) {
                     sendTextMessage(sender, err.toString());
