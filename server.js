@@ -159,8 +159,8 @@ const hasAvailable = async (store) => {
 const deleteSender = async (_sender) => {
     const { sender } = await fetchSessionSender(_sender) || {};
     if(sender == undefined) return { success: true , message: "success" };
-    const {success} = await deleteById('sessions', { sender });
-    await sendTextMessage('Please enter your store name:');
+    await deleteById('sessions', { sender });
+    await sendTextMessage(sender, 'Please enter your store name:');
     return true;
 };
 const fetchSessionSender = async (sender) => {
