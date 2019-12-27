@@ -63,7 +63,7 @@ app.get('/orders/:id', async (req, res) => {
     const shipback_id = await fetchShipbackByOrder(id);
     res.json(shipback_id);
 });
-const hasSelectedOrder = async (sender, order_id, step) => {
+const hasSelectedOrder = async (sender, order_id, step, message) => {
     if(order_id !== undefined && order_id !== null) {
         if(step == 1) {
             await sendTextMessage(sender, `You have an order(${order_id}) selected already!. Do you want to return new? [yes] = return new or [no] = current shipback `);
