@@ -84,7 +84,7 @@ const handlePostBack = async (sender, postback) => {
 };
 const handleMessagingRef = async (sender, referral) => {
     const { ref } = referral || {};
-    const { store, order_id } = separateRef(ref);
+    const { store, order_id } = separateRef(ref) || { store: null, order_id: null };
     if (await hasNotRef(sender, store, order_id) != false) return true;
     if (await hasStoreRef(sender, store, order_id) != false) return true;
     return await hasAllRef(sender, store, order_id);
