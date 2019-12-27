@@ -32,23 +32,7 @@ app.post('/webhook/', async (req, res) => {
             var text = event.message.text;
             const name = text.toLowerCase();
             const message = text.toLowerCase();
-            if(message.length <= 0) return;
             const {step, order_id } = await fetchSessionSender(sender) || {};
-            if(order_id !== undefined && order_id !== null) {
-                if(step == 1) {
-                    await sendTextMessage(sender, `You have an order(${order_id}) selected already!. Do you want to return new? [yes] = return new or [no] = current shipback `);
-                    await saveOrderIdBySender(sender, { order_id: null, step: 2 });
-                    return;
-                }
-                if(message == 'yes'){
-                    await saveOrderIdBySender(sender, { order_id: null, step: 1 });
-                    return await sendTextMessage(sender, "Please enter your order number: ");
-                } else if(message == 'no') {
-                    await saveOrderIdBySender(sender, { step: 1 });
-                    return await sendMessagebyOrder(sender, order_id);
-                } 
-                return;  
-            }
             if(step == undefined) {
                 const has_store_available = await hasAvailable(name);
                 if(has_store_available) {
@@ -58,11 +42,9 @@ app.post('/webhook/', async (req, res) => {
                     await sendTextMessage(sender, "Sorry, your store has not registed. Please try again!");
                 }
             } else {
-                if(step == 1) {
-                    await sendMessagebyOrder(sender, text);
-                }else {
-                    await saveOrderIdBySender(sender, { step: 1 });
-                }
+                const has_selected_order = await hasSelectedOrder(sender, order_id);
+                if (has_selected_order) return;
+                if(step == 1) await sendMessagebyOrder(sender, text);
             }
         }
     }
@@ -77,6 +59,26 @@ app.get('/orders/:id', async (req, res) => {
     const shipback_id = await fetchShipbackByOrder(id);
     res.json(shipback_id);
 });
+const hasSelectedOrder = async (sender, order_id) => {
+    if(order_id !== undefined && order_id !== null) {
+        if(step == 1) {
+            await sendTextMessage(sender, `You have an order(${order_id}) selected already!. Do you want to return new? [yes] = return new or [no] = current shipback `);
+            await saveOrderIdBySender(sender, { order_id: order_id, step: 2 });
+            return true;
+        }
+        if(message == 'yes'){
+            await saveOrderIdBySender(sender, { order_id: null, step: 1 });
+            await sendTextMessage(sender, "Please enter your order number: ");
+            return true;
+        } else if(message == 'no') {
+            await saveOrderIdBySender(sender, { step: 1 });
+            await sendMessagebyOrder(sender, order_id);
+            return true;
+        } 
+        return true;  
+    }
+    return false;
+};
 const hasAvailable = async (store) => {
     const {error} = await fetchByField("stores", { name: store }) || {};
     return error ? false: true;
