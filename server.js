@@ -91,7 +91,7 @@ const handleMessagingRef = async (sender, referral) => {
 }
 const hasNotRef = async (sender, store, order_id) => {
     if (store == null && order_id == null) {
-        return await sendTextMessage(sender, "Please enter your name:");
+        return await sendTextMessage(sender, "Please enter your store name:");
     }
     return false;
 }
