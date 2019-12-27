@@ -78,7 +78,8 @@ const hasSelectedOrder = async (sender, order_id, step, message) => {
             await saveOrderIdBySender(sender, { step: 1 });
             await sendMessagebyOrder(sender, order_id);
             return true;
-        } 
+        }
+        await sendTextMessage(sender, "test"); 
         return true;  
     }
     return false;
