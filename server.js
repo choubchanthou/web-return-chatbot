@@ -44,7 +44,7 @@ app.post('/webhook/', async (req, res) => {
                     break;
                 }
             } else {
-                const has_selected_order = await hasSelectedOrder(sender, order_id, step, message);
+                const has_selected_order = await hasSelectedOrder(sender, order_id, message);
                 if (has_selected_order) break;
                 if(step == 1) {
                     await sendMessagebyOrder(sender, text);
@@ -71,12 +71,64 @@ app.get('/orders/:id', async (req, res) => {
     res.json(shipback_id);
 });
 const handlePostBack = async (sender, postback) => {
-    return await sendTextMessage(sender, JSON.stringify(postback));
+    const {referral} = postback || {};
+    const { ref } = referral || {};
+    const { store, order_id } = separateRef(ref);
+    if (await hasNotRef(sender, store, order_id) != false) return true;
+    if (await hasStoreRef(sender, store, order_id) != false) return true;
+    return await hasAllRef(sender, store, order_id);
 };
 const handleMessagingRef = async (sender, referral) => {
-    return await sendTextMessage(sender, JSON.stringify(referral));
+    const { ref } = referral || {};
+    const { store, order_id } = separateRef(ref);
+    if (await hasNotRef(sender, store, order_id) != false) return true;
+    if (await hasStoreRef(sender, store, order_id) != false) return true;
+    return await hasAllRef(sender, store, order_id);
 }
-const hasSelectedOrder = async (sender, order_id, step, message) => {
+const hasNotRef = async (sender, store, order_id) => {
+    if(store == null && order_id == null) {
+        return await sendTextMessage(sender, "Please enter your name:");
+    }
+    return false;
+}
+const hasStoreRef = async (sender, store, order_id) => {
+    if(store !== null && order_id == null) {
+        const is_avail = await hasAvailable(store);
+        const { store_name } = await fetchSessionSender(sender) || {};
+        if (!is_avail) return await sendTextMessage(sender, `Sorry, your store(${store}) has not registed. Please try again!`);
+        if(store_name == undefined) {
+            await insertOne("sessions",{ sender, store_name: store, step: 1 });
+        } else {
+            await saveOrderIdBySender(sender, { store_name: store, step: 1 });
+        }
+        return await sendTextMessage(sender, "Please enter your order number: ");
+    }
+    return false;
+};
+const hasAllRef = async (sender, store, order_id) => {
+    if(store !== null && order_id !== null) {
+        const is_avail = await hasAvailable(store);
+        const { store_name, order_id, step } = await fetchSessionSender(sender) || {};
+        if (!is_avail) return await sendTextMessage(sender, `Sorry, your store(${store}) has not registed. Please try again!`);
+        if(store_name == undefined && order_id == undefined) {
+            await insertOne("sessions",{ sender, store_name: store, order_id, step: 1 });
+        } else {
+            await saveOrderIdBySender(sender, { store_name: store, order_id, step: 1 });
+        }
+        const has_selected_order = await hasSelectedOrder(sender, order_id, order_id);
+        if (has_selected_order) return true;
+        if(step == 1) return await sendMessagebyOrder(sender, order_id);
+    }
+    return false;
+};
+const separateRef = (ref) => {
+    const ref_array = ref.split('-');
+    const count = ref_array.length;
+    if(count <= 1) return { store: ref_array[0], order_id: null };
+    if(count == 0) return { store: null, order_id: null };
+    return { store: ref_array[0], order_id: ref_array[1] };
+};
+const hasSelectedOrder = async (sender, order_id, message) => {
     if(order_id !== undefined && order_id !== null) {
         if(message == 'hi'){
             await saveOrderIdBySender(sender, { order_id: null });
