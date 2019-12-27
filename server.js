@@ -123,7 +123,7 @@ const hasAllRef = async (sender, store, _order_id) => {
             const has_selected_order = await hasSelectedOrder(sender, _order_id, _order_id);
             if (has_selected_order) return true;
             if (step == 1) { 
-                return await sendMessagebyOrder(sender, order_id);
+                return await sendMessagebyOrder(sender, _order_id);
             }
         }
         return false;
