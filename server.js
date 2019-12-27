@@ -65,7 +65,7 @@ app.post('/webhook/', async (req, res) => {
     }
     res.sendStatus(200);
 });
-app.post('/shipbacks', async (req, res) => {
+app.post('/shipbacks/finish', async (req, res) => {
     const data = await update('sessions', { order_id: 124212 }, { sender: 122 });
     res.json(data);
 });
@@ -252,14 +252,14 @@ const fetchKeys = (object) => {
 const sendMessagebyOrder = async (sender, order_id) => {
     const { shipback_id, is_order } = await hasAvailableOrder(order_id);
     if (shipback_id !== null) {
-        const { public_url, charged, label_url } = await httpGet(`shipbacks/${shipback_id}`) || {};
+        let { public_url, charged, label_url } = await httpGet(`shipbacks/${shipback_id}`) || {};
+        public_url = toPublicURL(public_url);
         await saveOrderIdBySender(sender, { order_id, step: 1 });
         if (charged) {
             await sendMessageButton(sender, 'Tracking', 'Click to tracking your shipback', public_url);
             return await sendMessageButton(sender, 'Download Label', 'Your shipback already return!. Please download label below', label_url);
         }
         return await sendTemplate(sender, public_url);
-
     }
     if (shipback_id == null && is_order == true) {
         const { shipback } = await createShipback(order_id);
@@ -319,7 +319,6 @@ const sendTextMessage = async (sender, text) => {
     await httpPost('', payload, 'fb');
     return { success: true };
 }
-
 const sendTemplate = async (sender, web_url) => {
     const payload = {
         recipient: {
@@ -345,7 +344,11 @@ const sendTemplate = async (sender, web_url) => {
     await httpPost('', payload, 'fb');
     return { success: true };
 }
-
+const toPublicURL = (public_url) => {
+    const new_url = process.env.WEB_URL;
+    const srb_web_url = 'https://staging.v2.shoprunback.com';
+    return public_url.replace(srb_web_url, new_url);
+};
 const sendMessageButton = async (sender, title, message, web_url) => {
     const payload = {
         "recipient": {
