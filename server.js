@@ -65,7 +65,7 @@ app.get('/orders/:id', async (req, res) => {
 });
 const hasSelectedOrder = async (sender, order_id, step, message) => {
     if(order_id !== undefined && order_id !== null) {
-        await sendTextMessage(sender, "test"); 
+        await sendTextMessage(sender, message); 
         if(step == 1) {
             await sendTextMessage(sender, `You have an order(${order_id}) selected already!. Do you want to return new? [yes] = return new or [no] = current shipback `);
             await saveOrderIdBySender(sender, { step: 2 });
