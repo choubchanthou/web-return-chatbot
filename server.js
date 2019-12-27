@@ -42,9 +42,13 @@ app.post('/webhook/', async (req, res) => {
                     await sendTextMessage(sender, "Sorry, your store has not registed. Please try again!");
                 }
             } else {
-                const has_selected_order = await hasSelectedOrder(sender, order_id);
-                if (has_selected_order) return;
-                if(step == 1) await sendMessagebyOrder(sender, text);
+                try {
+                    const has_selected_order = await hasSelectedOrder(sender, order_id);
+                    if (has_selected_order) return;
+                    if(step == 1) await sendMessagebyOrder(sender, text);
+                } catch(err) {
+                    sendTextMessage(sender, err.toString());
+                }
             }
         }
     }
