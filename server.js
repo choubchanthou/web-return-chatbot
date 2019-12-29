@@ -138,7 +138,7 @@ const hasAllRef = async (sender, store, _order_id) => {
 };
 const separateRef = (ref) => {
     ref = ref || '';
-    const ref_array = ref.split(',');
+    const ref_array = ref == '' ? [] : ref.split(',');
     const count = ref_array.length;
     if (count <= 1) return { store: ref_array[0], order_id: null };
     if (count == 0) return { store: null, order_id: null };
