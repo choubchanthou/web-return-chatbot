@@ -363,16 +363,15 @@ const sendMessageButton = async (sender, title, message, web_url) => {
             "attachment": {
                 "type": "template",
                 "payload": {
-                    "template_type": "button",
-                    "text": message,
-                    "buttons": [
-                        {
-                            "type": "web_url",
-                            "url": web_url,
-                            "title": title,
-                            messenger_extensions: true
-                        }
-                    ]
+                    template_type: "button",
+                    text: message,
+                    buttons: [{
+                        type: "web_url",
+                        url: web_url,
+                        title: title,
+                        webview_height_ratio: "full",
+                        messenger_extensions: true
+                    }]
                 }
             }
         }
