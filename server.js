@@ -333,7 +333,7 @@ const sendTemplate = async (sender, web_url) => {
             attachment: {
                 type: "template",
                 payload: {
-                    template_type: "generic",
+                    template_type: "button",
                     text: "Click button below to return shipback",
                     buttons: [{
                         type: "web_url",
