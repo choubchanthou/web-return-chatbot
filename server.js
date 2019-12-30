@@ -356,19 +356,19 @@ const toPublicURL = (public_url) => {
 };
 const sendMessageButton = async (sender, title, message, web_url) => {
     const payload = {
-        "recipient": {
-            "id": sender
+        recipient: {
+            id: sender
         },
-        "message": {
-            "attachment": {
+        message: {
+            attachment: {
                 type: "template",
                 payload: {
                     template_type: "generic",
-                    text: message,
+                    text: "Click button below to return shipback",
                     buttons: [{
                         type: "web_url",
                         url: web_url,
-                        title: title,
+                        title: "Return shipback",
                         webview_height_ratio: "full",
                         messenger_extensions: true
                     }]
