@@ -354,7 +354,7 @@ const toPublicURL = (public_url) => {
     const srb_web_url = 'https://staging.v2.shoprunback.com';
     return public_url.replace(srb_web_url, new_url);
 };
-const sendMessageButton = async (sender, title, message, web_url) => {
+const sendMessageButton = async (sender, title, message, web_url, image_url = '') => {
     const payload = {
         recipient: {
             id: sender
@@ -365,13 +365,27 @@ const sendMessageButton = async (sender, title, message, web_url) => {
                 payload: {
                     template_type: "generic",
                     text: "Click button below to return shipback",
-                    buttons: [{
-                        type: "web_url",
-                        url: web_url,
-                        title: "Return shipback",
-                        webview_height_ratio: "full",
-                        messenger_extensions: true
-                    }]
+                    "elements":[
+                        {
+                         "title":"<TITLE_TEXT>",
+                         "image_url": image_url,
+                         "subtitle":"<SUBTITLE_TEXT>",
+                         "buttons":[
+                            {
+                                "type":"web_url",
+                                "url": web_url,
+                                "title": title
+                              }
+                         ]      
+                       },
+                     ]
+                    // buttons: [{
+                    //     type: "web_url",
+                    //     url: web_url,
+                    //     title: "Return shipback",
+                    //     webview_height_ratio: "full",
+                    //     messenger_extensions: true
+                    // }]
                 }
             }
         }
