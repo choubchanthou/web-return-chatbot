@@ -369,7 +369,8 @@ const sendMessageButton = async (sender, title, message, web_url) => {
                         {
                             "type": "web_url",
                             "url": web_url,
-                            "title": title
+                            "title": title,
+                            messenger_extensions: true
                         }
                     ]
                 }
