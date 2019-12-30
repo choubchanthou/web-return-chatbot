@@ -349,7 +349,8 @@ const sendMessageButton = async (sender, title, message, web_url) => {
                       "type":"web_url",
                       "url": web_url,
                       "title": title,
-                      "webview_height_ratio": "full"
+                      "webview_height_ratio": "full",
+                      "messenger_extensions": true
                     }
                   ]
                 }
