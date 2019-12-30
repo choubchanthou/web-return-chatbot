@@ -66,9 +66,9 @@ app.post('/webhook/', async (req, res) => {
     res.sendStatus(200);
 });
 app.post('/shipbacks/finish', async (req, res) => {
-    const { label_url } = req.body || {};
-    await update('sessions', { order_id: null, step: 1 }, { sender: '2701680329926002' });
-    await sendMessageButton('2701680329926002', 'Download label', "Please download lable below:",label_url, "false");
+    const { sender, label_url } = req.body || {};
+    await update('sessions', { order_id: null, step: 1 }, { sender });
+    await sendMessageButton(sender, 'Download label', "Please download lable below:",label_url, "false");
     res.json({ success: true });
 });
 app.get('/orders/:id', async (req, res) => {
