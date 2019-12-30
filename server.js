@@ -325,28 +325,7 @@ const sendTextMessage = async (sender, text) => {
     return { success: true };
 }
 const sendTemplate = async (sender, web_url) => {
-    const payload = {
-        recipient: {
-            id: sender
-        },
-        message: {
-            attachment: {
-                type: "template",
-                payload: {
-                    template_type: "generic",
-                    text: "Click button below to return shipback",
-                    buttons: [{
-                        type: "web_url",
-                        url: web_url,
-                        title: "Return shipback",
-                        webview_height_ratio: "full",
-                        messenger_extensions: true
-                    }]
-                }
-            }
-        }
-    };
-    await httpPost('', payload, 'fb');
+    await sendMessageButton(sender, 'Return shipback', 'Click button below to return shipback', web_url);
     return { success: true };
 }
 const toPublicURL = (public_url) => {
@@ -354,7 +333,7 @@ const toPublicURL = (public_url) => {
     const srb_web_url = 'https://staging.v2.shoprunback.com';
     return public_url.replace(srb_web_url, new_url);
 };
-const sendMessageButton = async (sender, title, message, web_url, image_url = '') => {
+const sendMessageButton = async (sender, title, message, web_url) => {
     const payload = {
         recipient: {
             id: sender
@@ -364,12 +343,12 @@ const sendMessageButton = async (sender, title, message, web_url, image_url = ''
                 "type":"template",
                 "payload":{
                   "template_type":"button",
-                  "text":"Try the URL button!",
+                  "text": message,
                   "buttons":[
                     {
                       "type":"web_url",
                       "url": web_url,
-                      "title":"URL Button",
+                      "title": title,
                       "webview_height_ratio": "full"
                     }
                   ]
