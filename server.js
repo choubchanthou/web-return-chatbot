@@ -364,12 +364,17 @@ const sendMessageButton = async (sender, title, message, web_url, image_url = ''
                 type: "template",
                 payload: {
                     template_type: "generic",
-                    text: "Click button below to return shipback",
                     "elements":[
                         {
-                         "title":"<TITLE_TEXT>",
-                         "image_url": image_url,
-                         "subtitle":"<SUBTITLE_TEXT>",
+                         "title": title,
+                         "image_url": "https://petersfancybrownhats.com/company_image.png",
+                         "subtitle": message,
+                         "default_action": {
+                            "type": "web_url",
+                            "url": "<DEFAULT_URL_TO_OPEN>",
+                            "messenger_extensions": true,
+                            "webview_height_ratio": "full"
+                          },
                          "buttons":[
                             {
                                 "type":"web_url",
