@@ -264,7 +264,7 @@ const sendMessagebyOrder = async (sender, order_id) => {
         await saveOrderIdBySender(sender, { order_id, step: 1 });
         if (charged) {
             await sendMessageButton(sender, 'Tracking', 'Click to tracking your shipback', public_url);
-            return await sendMessageButton(sender, 'Download Label', 'Your shipback already return!. Please download label below', label_url, undefined);
+            return await sendMessageButton(sender, 'Download Label', 'Your shipback already return!. Please download label below', label_url);
         }
         return await sendTemplate(sender, public_url);
     }
@@ -352,7 +352,7 @@ const sendMessageButton = async (sender, title, message, web_url, extension = tr
                       "url": web_url,
                       "title": title,
                       "webview_height_ratio": "full",
-                      "messenger_extensions": extension
+                      "messenger_extensions": "true"
                     }
                   ]
                 }
