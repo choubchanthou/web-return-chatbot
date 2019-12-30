@@ -368,7 +368,7 @@ const sendMessageButton = async (sender, title, message, web_url, image_url = ''
                   "buttons":[
                     {
                       "type":"web_url",
-                      "url":"https://www.messenger.com/",
+                      "url": web_url,
                       "title":"URL Button",
                       "webview_height_ratio": "full"
                     }
