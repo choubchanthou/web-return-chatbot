@@ -358,7 +358,7 @@ const sendMessageButton = async (sender, title, message, web_url) => {
         }
     };
     const res = await httpPost('', payload, 'fb');
-    await sendTextMessage(sender, res.toString());
+    await sendTextMessage(sender, JSON.stringify(res));
     return { success: true };
 };
 
