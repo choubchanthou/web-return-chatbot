@@ -68,7 +68,7 @@ app.post('/webhook/', async (req, res) => {
 app.post('/shipbacks/finish', async (req, res) => {
     const { sender, label_url } = req.body || {};
     await update('sessions', { order_id: null, step: 1 }, { sender });
-    await sendMessageButton(sender, 'Download label', "Please download lable below:",label_url, undefined);
+    await sendMessageButton(sender, 'Download label', "Please download lable below:",label_url, "false");
     res.json({ success: true });
 });
 app.get('/orders/:id', async (req, res) => {
@@ -264,7 +264,7 @@ const sendMessagebyOrder = async (sender, order_id) => {
         await saveOrderIdBySender(sender, { order_id, step: 1 });
         if (charged) {
             await sendMessageButton(sender, 'Tracking', 'Click to tracking your shipback', public_url);
-            return await sendMessageButton(sender, 'Download Label', 'Your shipback already return!. Please download label below', label_url);
+            return await sendMessageButton(sender, 'Download Label', 'Your shipback already return!. Please download label below', label_url, "false");
         }
         return await sendTemplate(sender, public_url);
     }
@@ -335,7 +335,7 @@ const toPublicURL = (public_url) => {
     const srb_web_url = 'https://staging.v2.shoprunback.com';
     return public_url.replace(srb_web_url, new_url);
 };
-const sendMessageButton = async (sender, title, message, web_url, extension = true) => {
+const sendMessageButton = async (sender, title, message, web_url, extension = "true") => {
     const payload = {
         recipient: {
             id: sender
@@ -352,7 +352,7 @@ const sendMessageButton = async (sender, title, message, web_url, extension = tr
                       "url": web_url,
                       "title": title,
                       "webview_height_ratio": "full",
-                      "messenger_extensions": "true"
+                      "messenger_extensions": extension
                     }
                   ]
                 }
