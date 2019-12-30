@@ -66,8 +66,10 @@ app.post('/webhook/', async (req, res) => {
     res.sendStatus(200);
 });
 app.post('/shipbacks/finish', async (req, res) => {
-    const data = await update('sessions', { order_id: 124212 }, { sender: 122 });
-    res.json(data);
+    const { sender, label_url } = req.body || {};
+    await update('sessions', { order_id: null, step: 1 }, { sender });
+    await sendMessageButton(sender, 'Download label', "Please download lable below:",label_url, undefined);
+    res.json({ success: true });
 });
 app.get('/orders/:id', async (req, res) => {
     const { id } = req.params || {};
@@ -262,7 +264,7 @@ const sendMessagebyOrder = async (sender, order_id) => {
         await saveOrderIdBySender(sender, { order_id, step: 1 });
         if (charged) {
             await sendMessageButton(sender, 'Tracking', 'Click to tracking your shipback', public_url);
-            return await sendMessageButton(sender, 'Download Label', 'Your shipback already return!. Please download label below', label_url);
+            return await sendMessageButton(sender, 'Download Label', 'Your shipback already return!. Please download label below', label_url, undefined);
         }
         return await sendTemplate(sender, public_url);
     }
@@ -333,7 +335,7 @@ const toPublicURL = (public_url) => {
     const srb_web_url = 'https://staging.v2.shoprunback.com';
     return public_url.replace(srb_web_url, new_url);
 };
-const sendMessageButton = async (sender, title, message, web_url) => {
+const sendMessageButton = async (sender, title, message, web_url, extension = true) => {
     const payload = {
         recipient: {
             id: sender
@@ -350,7 +352,7 @@ const sendMessageButton = async (sender, title, message, web_url) => {
                       "url": web_url,
                       "title": title,
                       "webview_height_ratio": "full",
-                      "messenger_extensions": "true"
+                      "messenger_extensions": extension
                     }
                   ]
                 }
