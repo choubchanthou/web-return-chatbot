@@ -370,14 +370,11 @@ const sendMessageButton = async (sender, title, message, web_url, image_url = ''
                     "image_url": '',
                     "buttons": [
                       {
-                        "type": "postback",
-                        "title": "Yes!",
-                        "payload": "yes",
-                      },
-                      {
-                        "type": "postback",
-                        "title": "No!",
-                        "payload": "no",
+                        "type":"web_url",
+                        "url": web_url,
+                        "title": title,
+                        "webview_height_ratio": "full",
+                        "messenger_extensions": "true"
                       }
                     ],
                   }]
