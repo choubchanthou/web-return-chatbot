@@ -360,24 +360,19 @@ const sendMessageButton = async (sender, title, message, web_url, image_url = ''
             id: sender
         },
         message: {
-            "attachment": {
-                "type": "template",
-                "payload": {
-                  "template_type": "generic",
-                  "elements": [{
-                    "title": "Is this the right picture?",
-                    "subtitle": "Tap a button to answer.",
-                    "image_url": '',
-                    "buttons": [
-                      {
-                        "type":"web_url",
-                        "url": web_url,
-                        "title": title,
-                        "webview_height_ratio": "full",
-                        "messenger_extensions": "true"
-                      }
-                    ],
-                  }]
+            "attachment":{
+                "type":"template",
+                "payload":{
+                  "template_type":"button",
+                  "text":"Try the URL button!",
+                  "buttons":[
+                    {
+                      "type":"web_url",
+                      "url":"https://www.messenger.com/",
+                      "title":"URL Button",
+                      "webview_height_ratio": "full"
+                    }
+                  ]
                 }
               }
         }
