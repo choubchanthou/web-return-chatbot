@@ -355,28 +355,32 @@ const toPublicURL = (public_url) => {
     return public_url.replace(srb_web_url, new_url);
 };
 const sendMessageButton = async (sender, title, message, web_url) => {
-    const payload = {
-        "recipient": {
-            "id": sender
-        },
-        "message": {
-            "attachment": {
-                "type": "template",
-                "payload": {
-                    template_type: "button",
-                    text: message,
-                    buttons: [{
-                        type: "web_url",
-                        url: web_url,
-                        title: title,
-                        webview_height_ratio: "full",
-                        messenger_extensions: true
-                    }]
+    try {
+        const payload = {
+            recipient: {
+                id: sender
+            },
+            message: {
+                attachment: {
+                    type: "template",
+                    payload: {
+                        template_type: "button",
+                        text: message,
+                        buttons: [{
+                            type: "web_url",
+                            url: web_url,
+                            title: title,
+                            webview_height_ratio: "full",
+                            messenger_extensions: true
+                        }]
+                    }
                 }
             }
-        }
-    };
-    await httpPost('', payload, 'fb');
+        };
+        await httpPost('', payload, 'fb');
+    } catch (error) {
+        await sendTextMessage(sender, error.toString());
+    }
     return { success: true };
 };
 
