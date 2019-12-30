@@ -360,39 +360,29 @@ const sendMessageButton = async (sender, title, message, web_url, image_url = ''
             id: sender
         },
         message: {
-            attachment: {
-                type: "template",
-                payload: {
-                    template_type: "generic",
-                    "elements":[
-                        {
-                         "title": title,
-                         "image_url": "https://petersfancybrownhats.com/company_image.png",
-                         "subtitle": message,
-                         "default_action": {
-                            "type": "web_url",
-                            "url": "<DEFAULT_URL_TO_OPEN>",
-                            "messenger_extensions": true,
-                            "webview_height_ratio": "full"
-                          },
-                         "buttons":[
-                            {
-                                "type":"web_url",
-                                "url": web_url,
-                                "title": title
-                              }
-                         ]      
-                       },
-                     ]
-                    // buttons: [{
-                    //     type: "web_url",
-                    //     url: web_url,
-                    //     title: "Return shipback",
-                    //     webview_height_ratio: "full",
-                    //     messenger_extensions: true
-                    // }]
+            "attachment": {
+                "type": "template",
+                "payload": {
+                  "template_type": "generic",
+                  "elements": [{
+                    "title": "Is this the right picture?",
+                    "subtitle": "Tap a button to answer.",
+                    "image_url": '',
+                    "buttons": [
+                      {
+                        "type": "postback",
+                        "title": "Yes!",
+                        "payload": "yes",
+                      },
+                      {
+                        "type": "postback",
+                        "title": "No!",
+                        "payload": "no",
+                      }
+                    ],
+                  }]
                 }
-            }
+              }
         }
     };
     await httpPost('', payload, 'fb');
