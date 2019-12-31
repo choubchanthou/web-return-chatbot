@@ -32,7 +32,7 @@ app.post('/webhook/', async (req, res) => {
             var text = event.message.text;
             const name = text.toLowerCase();
             const message = text.toLowerCase();
-            const { step } = await fetchSessionSender(sender) || {};
+            const { step, store_name } = await fetchSessionSender(sender) || {};
             if (message == 'hi') {
                 await deleteSender(sender);
                 break;
@@ -47,8 +47,8 @@ app.post('/webhook/', async (req, res) => {
                 await sendTextMessage(sender, "Sorry, your store has not registed. Please try again!");
                 break;
             } else {
-                if (await hasSelectedOrder(sender, message)) break;
-                await sendMessagebyOrder(sender, text);
+                if (await hasSelectedOrder(sender, message, store_name)) break;
+                await sendMessagebyOrder(sender, text, store_name);
                 break;
             }
         } else if (event.postback) {
@@ -117,9 +117,8 @@ const hasAllRef = async (sender, store, _order_id) => {
         if (store !== null && _order_id !== null) {
             const is_avail = await hasAvailable(store);
             if (!is_avail) return await sendTextMessage(sender, `Sorry, your store(${store}) has not registed. Please try again!`);
-            if (await hasSelectedOrder(sender, _order_id, _order_id)) return true;
-            await addOrder(sender, _order_id, store);
-            return await sendMessagebyOrder(sender, _order_id);
+            if (await hasSelectedOrder(sender, _order_id, store)) return true;
+            return await sendMessagebyOrder(sender, _order_id, store);
         }
         return false;
     } catch (error) {
@@ -140,7 +139,7 @@ const separateRef = (ref) => {
     if (count == 0) return { store: null, order_id: null };
     return { store: ref_array[0], order_id: ref_array[1] };
 };
-const hasSelectedOrder = async (sender, message) => {
+const hasSelectedOrder = async (sender, message, store) => {
     const { order_id } = await fetchByField('sessions', { sender }) || {};
     if (order_id == undefined || order_id == null) return false;
     if (message == 'new') {
@@ -149,7 +148,7 @@ const hasSelectedOrder = async (sender, message) => {
         return true;
     }
     await sendTextMessage(sender, `You have an order(${order_id}) selected already!. Please say [new] to new return`);
-    await sendMessagebyOrder(sender, order_id);
+    await sendMessagebyOrder(sender, order_id, store);
     return true;
 };
 const hasAvailable = async (store) => {
@@ -249,13 +248,13 @@ const fetchKeys = (object) => {
     return keys.join(',');
 };
 
-const sendMessagebyOrder = async (sender, order_id) => {
+const sendMessagebyOrder = async (sender, order_id, store) => {
     try {
         const { shipback_id, is_order } = await hasAvailableOrder(order_id);
         if (shipback_id !== null) {
             let { public_url, charged, label_url } = await httpGet(`shipbacks/${shipback_id}`) || {};
             public_url = toPublicURL(public_url);
-            if (charged == false) await saveOrderIdBySender(sender, { order_id, step: 1 });
+            if (charged == false) await addOrder(sender, _order_id, store);
             if (charged) {
                 await sendMessageButton(sender, 'Tracking', 'Click to tracking your shipback', public_url);
                 return await sendMessageButton(sender, 'Download Label', 'Your shipback already return!. Please download label below', label_url, "false");
