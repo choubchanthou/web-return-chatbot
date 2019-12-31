@@ -121,7 +121,6 @@ const hasAllRef = async (sender, store, _order_id) => {
     try {
         if (store !== null && _order_id !== null) {
             const is_avail = await hasAvailable(store);
-            const { store_name, order_id, step } = await fetchSessionSender(sender) || {};
             if (!is_avail) return await sendTextMessage(sender, `Sorry, your store(${store}) has not registed. Please try again!`);
             const has_selected_order = await hasSelectedOrder(sender, _order_id, _order_id);
             if (has_selected_order) return true;
