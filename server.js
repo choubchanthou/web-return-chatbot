@@ -64,7 +64,7 @@ app.post('/webhook/', async (req, res) => {
 app.post('/shipbacks/finish', async (req, res) => {
     const { order_number, label_url } = req.body || {};
     const { sender } = await fetchByField("sessions", { order_id: order_number });
-    await update('sessions', { order_id: null, step: 1 }, { sender });
+    await addOrder(sender, null, 'etam');
     await sendMessageButton(sender, 'Download label', "Please download lable below:", label_url, "false");
     res.json({ success: true });
 });
