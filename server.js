@@ -33,8 +33,8 @@ app.post('/webhook/', async (req, res) => {
             const name = text.toLowerCase();
             const message = text.toLowerCase();
             const { step, order_id } = await fetchSessionSender(sender) || {};
-            if(message == 'hi') {
-                await deleteSender(sender); 
+            if (message == 'hi') {
+                await deleteSender(sender);
                 break;
             }
             if (step == undefined || step == 0) {
@@ -67,19 +67,19 @@ app.post('/webhook/', async (req, res) => {
 });
 app.post('/shipbacks/finish', async (req, res) => {
     const { order_number, label_url } = req.body || {};
-    const {sender} = await fetchByField("sessions", { order_id: order_number });
+    const { sender } = await fetchByField("sessions", { order_id: order_number });
     await update('sessions', { order_id: null, step: 1 }, { sender });
-    await sendMessageButton(sender, 'Download label', "Please download lable below:",label_url, "false");
+    await sendMessageButton(sender, 'Download label', "Please download lable below:", label_url, "false");
     res.json({ success: true });
 });
 app.get('/orders/:id', async (req, res) => {
     const { id } = req.params || {};
-    const dt_res = await deleteById('sessions',id);
+    const dt_res = await deleteById('sessions', id);
     res.json(dt_res);
 });
 const handlePostBack = async (sender, postback) => {
     try {
-        await sendTextMessage(sender, sender.toString());   
+        await sendTextMessage(sender, sender.toString());
         const { referral } = postback || {};
         const { ref } = referral || {};
         const { store, order_id } = separateRef(ref) || { store: null, order_id: null };
@@ -87,7 +87,7 @@ const handlePostBack = async (sender, postback) => {
         if (await hasStoreRef(sender, store, order_id) != false) return true;
         return await hasAllRef(sender, store, order_id);
     } catch (error) {
-        return await sendTextMessage(sender, error.toString());   
+        return await sendTextMessage(sender, error.toString());
     }
 };
 const handleMessagingRef = async (sender, referral) => {
@@ -124,7 +124,7 @@ const hasAllRef = async (sender, store, _order_id) => {
             if (!is_avail) return await sendTextMessage(sender, `Sorry, your store(${store}) has not registed. Please try again!`);
             const has_selected_order = await hasSelectedOrder(sender, _order_id, _order_id);
             if (has_selected_order) return true;
-            if (step == 1) { 
+            if (step == 1) {
                 return await sendMessagebyOrder(sender, _order_id);
             }
         }
@@ -161,7 +161,7 @@ const hasAvailable = async (store) => {
 };
 const deleteSender = async (_sender) => {
     const { sender } = await fetchSessionSender(_sender) || {};
-    if(sender == undefined) return { success: true , message: "success" };
+    if (sender == undefined) return { success: true, message: "success" };
     await deleteById('sessions', { sender });
     await sendTextMessage(sender, 'Please enter your store name:');
     return true;
@@ -181,7 +181,7 @@ const fetchById = (table, id) => {
     });
 }
 const deleteById = (table, object = {}, terminate = 'AND') => {
-    const { condition, values} = toCondition(object, terminate);
+    const { condition, values } = toCondition(object, terminate);
     const sql = `DELETE FROM ${table} WHERE ${condition}`;
     return new Promise(resolve => {
         db.run(sql, values, function (err) {
@@ -253,24 +253,29 @@ const fetchKeys = (object) => {
 };
 
 const sendMessagebyOrder = async (sender, order_id) => {
-    const { shipback_id, is_order } = await hasAvailableOrder(order_id);
-    if (shipback_id !== null) {
-        let { public_url, charged, label_url } = await httpGet(`shipbacks/${shipback_id}`) || {};
-        public_url = toPublicURL(public_url);
-        if (charged == false) await saveOrderIdBySender(sender, { order_id, step: 1 });
-        if (charged) {
-            await sendMessageButton(sender, 'Tracking', 'Click to tracking your shipback', public_url);
-            return await sendMessageButton(sender, 'Download Label', 'Your shipback already return!. Please download label below', label_url, "false");
+    try {
+        const { shipback_id, is_order } = await hasAvailableOrder(order_id);
+        if (shipback_id !== null) {
+            let { public_url, charged, label_url } = await httpGet(`shipbacks/${shipback_id}`) || {};
+            public_url = toPublicURL(public_url);
+            if (charged == false) await saveOrderIdBySender(sender, { order_id, step: 1 });
+            if (charged) {
+                await sendMessageButton(sender, 'Tracking', 'Click to tracking your shipback', public_url);
+                return await sendMessageButton(sender, 'Download Label', 'Your shipback already return!. Please download label below', label_url, "false");
+            }
+            return await sendTemplate(sender, public_url);
         }
-        return await sendTemplate(sender, public_url);
+        if (shipback_id == null && is_order == true) {
+            const { shipback } = await createShipback(order_id);
+            await saveOrderIdBySender(sender, { order_id, step: 1 });
+            await sendTemplate(sender, shipback.public_url);
+            return;
+        }
+        await sendTextMessage(sender, "Sorry, your order has not registered. Please enter again");
+    } catch (error) {
+        await sendTextMessage(sender, error.toString());
     }
-    if (shipback_id == null && is_order == true) {
-        const { shipback } = await createShipback(order_id);
-        await saveOrderIdBySender(sender, { order_id, step: 1 });
-        await sendTemplate(sender, shipback.public_url);
-        return;
-    }
-    await sendTextMessage(sender, "Sorry, your order has not registered. Please enter again");
+
 };
 const saveOrderIdBySender = async (sender, object = {}) => {
     const { success } = await update('sessions', object, { sender });
@@ -337,22 +342,22 @@ const sendMessageButton = async (sender, title, message, web_url, extension = "t
             id: sender
         },
         message: {
-            "attachment":{
-                "type":"template",
-                "payload":{
-                  "template_type":"button",
-                  "text": message,
-                  "buttons":[
-                    {
-                      "type":"web_url",
-                      "url": web_url,
-                      "title": title,
-                      "webview_height_ratio": "full",
-                      "messenger_extensions": extension
-                    }
-                  ]
+            "attachment": {
+                "type": "template",
+                "payload": {
+                    "template_type": "button",
+                    "text": message,
+                    "buttons": [
+                        {
+                            "type": "web_url",
+                            "url": web_url,
+                            "title": title,
+                            "webview_height_ratio": "full",
+                            "messenger_extensions": extension
+                        }
+                    ]
                 }
-              }
+            }
         }
     };
     const res = await httpPost('', payload, 'fb');
