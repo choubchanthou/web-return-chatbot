@@ -258,7 +258,7 @@ const sendMessagebyOrder = async (sender, order_id, store) => {
             if (charged) {
                 await sendMessageButton(sender, 'Tracking', 'Click to tracking your shipback', public_url);
                 await sendMessageButton(sender, 'Download Label', 'Your shipback already return!. Please download label below', label_url, "false");
-                await sendTextMessage(sender, "Your shipback are registered! Please enter your new order:");
+                return await sendTextMessage(sender, "Your shipback are registered! Please enter your new order:");
             }
             return await sendTemplate(sender, public_url);
         }
