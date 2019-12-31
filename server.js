@@ -128,7 +128,7 @@ const hasAllRef = async (sender, store, _order_id) => {
     }
 };
 const addOrder = async (sender, order, store_name) => {
-    const { shipback_id, is_order } = await hasAvailableOrder(order_id);
+    const { shipback_id } = await hasAvailableOrder(order) || {};
     if (shipback_id == null) return;
     let { charged } = await httpGet(`shipbacks/${shipback_id}`) || {};
     const { order_id } = await fetchByField('sessions', { sender }) || {};
