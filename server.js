@@ -263,7 +263,7 @@ const sendMessagebyOrder = async (sender, order_id) => {
     if (shipback_id !== null) {
         let { public_url, charged, label_url } = await httpGet(`shipbacks/${shipback_id}`) || {};
         public_url = toPublicURL(public_url);
-        await saveOrderIdBySender(sender, { order_id, step: 1 });
+        if (charged == false) await saveOrderIdBySender(sender, { order_id, step: 1 });
         if (charged) {
             await sendMessageButton(sender, 'Tracking', 'Click to tracking your shipback', public_url);
             return await sendMessageButton(sender, 'Download Label', 'Your shipback already return!. Please download label below', label_url, "false");
