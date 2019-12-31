@@ -124,6 +124,7 @@ const hasAllRef = async (sender, store, _order_id) => {
             if (!is_avail) return await sendTextMessage(sender, `Sorry, your store(${store}) has not registed. Please try again!`);
             const has_selected_order = await hasSelectedOrder(sender, _order_id, _order_id);
             if (has_selected_order) return true;
+            await addOrder(sender, _order_id, store);
             return await sendMessagebyOrder(sender, _order_id);
         }
         return false;
@@ -131,6 +132,11 @@ const hasAllRef = async (sender, store, _order_id) => {
         sendTextMessage(sender, error.toString())
         return false;
     }
+};
+const addOrder = async (sender, order, store_name) => {
+    const { order_id } = await fetchByField('sessions', { sender }) || {};
+    if (order_id == undefined) return await insertOne('sessions', { sender, order_id: order, store_name, step: 1 });
+    return await saveOrderIdBySender(sender, {order_id: order, store_name, step: 1});
 };
 const separateRef = (ref) => {
     ref = ref || '';
