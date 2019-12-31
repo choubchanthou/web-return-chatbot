@@ -32,7 +32,7 @@ app.post('/webhook/', async (req, res) => {
             var text = event.message.text;
             const name = text.toLowerCase();
             const message = text.toLowerCase();
-            const { step, order_id } = await fetchSessionSender(sender) || {};
+            const { step } = await fetchSessionSender(sender) || {};
             if (message == 'hi') {
                 await deleteSender(sender);
                 break;
@@ -43,17 +43,13 @@ app.post('/webhook/', async (req, res) => {
                     await insertOne("sessions", { sender: sender, store_name: name, step: 1 });
                     await sendTextMessage(sender, "Please enter your order number: ");
                     break;
-                } else {
-                    await sendTextMessage(sender, "Sorry, your store has not registed. Please try again!");
-                    break;
-                }
+                } 
+                await sendTextMessage(sender, "Sorry, your store has not registed. Please try again!");
+                break;
             } else {
-                const has_selected_order = await hasSelectedOrder(sender, order_id, message);
-                if (has_selected_order) break;
-                if (step == 1) {
-                    await sendMessagebyOrder(sender, text);
-                    break;
-                }
+                if (await hasSelectedOrder(sender, message)) break;
+                await sendMessagebyOrder(sender, text);
+                break;
             }
         } else if (event.postback) {
             await handlePostBack(sender, event.postback);
@@ -122,8 +118,7 @@ const hasAllRef = async (sender, store, _order_id) => {
         if (store !== null && _order_id !== null) {
             const is_avail = await hasAvailable(store);
             if (!is_avail) return await sendTextMessage(sender, `Sorry, your store(${store}) has not registed. Please try again!`);
-            const has_selected_order = await hasSelectedOrder(sender, _order_id, _order_id);
-            if (has_selected_order) return true;
+            if (await hasSelectedOrder(sender, _order_id, _order_id)) return true;
             await addOrder(sender, _order_id, store);
             return await sendMessagebyOrder(sender, _order_id);
         }
@@ -146,18 +141,17 @@ const separateRef = (ref) => {
     if (count == 0) return { store: null, order_id: null };
     return { store: ref_array[0], order_id: ref_array[1] };
 };
-const hasSelectedOrder = async (sender, order_id, message) => {
-    if (order_id !== undefined && order_id !== null) {
-        if (message == 'new') {
-            await saveOrderIdBySender(sender, { order_id: null, step: 1 });
-            await sendTextMessage(sender, "Please enter your order number: ");
-            return true;
-        }
-        await sendTextMessage(sender, `You have an order(${order_id}) selected already!. Please say [new] to new return`);
-        await sendMessagebyOrder(sender, order_id);
+const hasSelectedOrder = async (sender, message) => {
+    const { order_id } = await fetchByField('sessions', { sender }) || {};
+    if (order_id == undefined || order_id == null) return false;
+    if (message == 'new') {
+        await saveOrderIdBySender(sender, { order_id: null, step: 1 });
+        await sendTextMessage(sender, "Please enter your order number: ");
         return true;
     }
-    return false;
+    await sendTextMessage(sender, `You have an order(${order_id}) selected already!. Please say [new] to new return`);
+    await sendMessagebyOrder(sender, order_id);
+    return true;
 };
 const hasAvailable = async (store) => {
     const { error } = await fetchByField("stores", { name: store }) || {};
