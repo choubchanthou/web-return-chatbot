@@ -268,9 +268,10 @@ const sendMessagebyOrder = async (sender, order_id) => {
             return await sendTemplate(sender, public_url);
         }
         if (shipback_id == null && is_order == true) {
-            const { public_url } = await createShipback(order_id) || {};
+            const { public_url } = await createShipback(order_id);
             await saveOrderIdBySender(sender, { order_id, step: 1 });
-            await sendTemplate(sender, public_url);
+            // await sendTemplate(sender, public_url);
+            await sendTextMessage(sender, public_url);
             return;
         }
         await sendTextMessage(sender, "Sorry, your order has not registered. Please enter again");
