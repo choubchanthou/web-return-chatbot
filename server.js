@@ -269,7 +269,7 @@ const sendMessagebyOrder = async (sender, order_id) => {
         }
         if (shipback_id == null && is_order == true) {
             const { shipback } = await createShipback(order_id);
-            await sendTextMessage(sender, JSON.stringify(shipback));
+            await sendTextMessage(sender, '1212');
             // await saveOrderIdBySender(sender, { order_id, step: 1 });
             // await sendTemplate(sender, shipback.public_url);
             return;
