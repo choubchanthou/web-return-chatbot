@@ -28,32 +28,34 @@ app.post('/webhook/', async (req, res) => {
     for (var i = 0; i < messaging_events.length; i++) {
         var event = req.body.entry[0].messaging[i];
         var sender = event.sender.id;
-        if (event.message && event.message.text) {
-            var text = event.message.text;
-            const name = text.toLowerCase();
-            const message = text.toLowerCase();
-            const { step } = await fetchSessionSender(sender) || {};
-            if (step == undefined || step == 0) {
-                const has_store_available = await hasAvailable(name);
-                if (has_store_available) {
-                    await insertOne("sessions", { sender: sender, store_name: name, step: 1 });
-                    await sendTextMessage(sender, "Please enter your order number: ");
-                    break;
-                } 
-                await sendTextMessage(sender, "Sorry, your store has not registed. Please try again!");
-                break;
-            } else {
-                if (await hasSelectedOrder(sender, message)) break;
-                await sendMessagebyOrder(sender, text);
-                break;
-            }
-        } else if (event.postback) {
-            await handlePostBack(sender, event.postback);
-            break;
-        } else if (event.referral) {
-            await handleMessagingRef(sender, event.referral);
-            break;
-        }
+        await sendTextMessage(sender, JSON.stringify(event));
+        break;
+        // if (event.message && event.message.text) {
+        //     var text = event.message.text;
+        //     const name = text.toLowerCase();
+        //     const message = text.toLowerCase();
+        //     const { step } = await fetchSessionSender(sender) || {};
+        //     if (step == undefined || step == 0) {
+        //         const has_store_available = await hasAvailable(name);
+        //         if (has_store_available) {
+        //             await insertOne("sessions", { sender: sender, store_name: name, step: 1 });
+        //             await sendTextMessage(sender, "Please enter your order number: ");
+        //             break;
+        //         } 
+        //         await sendTextMessage(sender, "Sorry, your store has not registed. Please try again!");
+        //         break;
+        //     } else {
+        //         if (await hasSelectedOrder(sender, message)) break;
+        //         await sendMessagebyOrder(sender, text);
+        //         break;
+        //     }
+        // } else if (event.postback) {
+        //     await handlePostBack(sender, event.postback);
+        //     break;
+        // } else if (event.referral) {
+        //     await handleMessagingRef(sender, event.referral);
+        //     break;
+        // }
     }
     res.sendStatus(200);
 });
