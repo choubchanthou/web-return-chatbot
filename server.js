@@ -384,7 +384,11 @@ const httpHeaderSRB = (token = null) => {
 }
 
 const httpPost = async (short_url = '', payload, type = 'srb', page_id) => {
-    const headers = { 'srb': httpHeaderSRB(auth_token), 'fb': httpHeaderFB(page_id) };
+    let fb_header = {};
+    if(type == 'fb') {
+        fb_header = await httpHeaderFB(page_id);
+    }
+    const headers = { 'srb': httpHeaderSRB(auth_token), 'fb': fb_header };
     const url = { 'srb': `${dashboard_url}/${short_url}`, 'fb': `${fb_url}/${short_url}` };
     return await httpRequest(url[type], 'POST', payload, headers[type]);
 }
