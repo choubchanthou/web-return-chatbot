@@ -370,7 +370,7 @@ const createShipback = async (order_id) => {
     return await httpPost('shipbacks', payload);
 }
 
-const httpHeaderFB = (page_id) => {
+const httpHeaderFB = async (page_id) => {
     const { fb_token } = await fetchByField("stores", { page_id });
     return { access_token: fb_token };
 }
@@ -389,7 +389,11 @@ const httpPost = async (short_url = '', payload, type = 'srb', page_id) => {
     return await httpRequest(url[type], 'POST', payload, headers[type]);
 }
 const httpGet = async (short_url = '', type = 'srb', page_id) => {
-    const headers = { 'srb': httpHeaderSRB(auth_token), 'fb': httpHeaderFB(page_id) };
+    let fb_header = {};
+    if(type == 'fb') {
+        fb_header = await httpHeaderFB(page_id);
+    }
+    const headers = { 'srb': httpHeaderSRB(auth_token), 'fb': fb_header };
     const url = { 'srb': `${dashboard_url}/${short_url}`, 'fb': `${fb_url}/${short_url}` };
     return await httpRequest(url[type], 'GET', {}, headers[type]);
 };
