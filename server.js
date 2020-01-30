@@ -33,10 +33,6 @@ app.post('/webhook/', async (req, res) => {
             const name = text.toLowerCase();
             const message = text.toLowerCase();
             const { step } = await fetchSessionSender(sender) || {};
-            if (message == 'hi') {
-                await deleteSender(sender);
-                break;
-            }
             if (step == undefined || step == 0) {
                 const has_store_available = await hasAvailable(name);
                 if (has_store_available) {
@@ -148,8 +144,9 @@ const hasSelectedOrder = async (sender, message) => {
     const { order_id } = await fetchByField('sessions', { sender }) || {};
     if (order_id == undefined || order_id == null) return false;
     if (message == 'new') {
-        await saveOrderIdBySender(sender, { order_id: null, step: 1 });
-        await sendTextMessage(sender, "Please enter your order number: ");
+        // await saveOrderIdBySender(sender, { order_id: null, step: 1 });
+        await deleteSender(sender);
+        // await sendTextMessage(sender, "Please enter your order number: ");
         return true;
     }
     await sendTextMessage(sender, `You have an order(${order_id}) selected already!. Please say [new] to new return`);
