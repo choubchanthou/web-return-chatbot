@@ -93,7 +93,7 @@ const handleMessagingRef = async (sender,  referral) => {
 }
 const hasNotRef = async (sender, store, order_id) => {
     if (store == null && order_id == null) {
-        return await sendTextMessage(sender,  "Please enter your store name:");
+        return await sendTextMessage(sender, "Please enter your store name:");
     }
     return false;
 }
@@ -107,7 +107,7 @@ const hasStoreRef = async (sender, store, order_id) => {
         } else {
             await saveOrderIdBySender(sender,  { store_name: store, step: 1 });
         }
-        return await sendTextMessage(sender,  "Please enter your order number: ");
+        return await sendTextMessage(sender, "Please enter your order number: ");
     }
     return false;
 };
@@ -115,14 +115,14 @@ const hasAllRef = async (sender,  store, _order_id) => {
     try {
         if (store !== null && _order_id !== null) {
             const is_avail = await hasAvailable(store);
-            if (!is_avail) return await sendTextMessage(sender,  `Sorry, your store(${store}) has not registed. Please try again!`);
+            if (!is_avail) return await sendTextMessage(sender, `Sorry, your store(${store}) has not registed. Please try again!`);
             if (await hasSelectedOrder(sender,  _order_id, _order_id)) return true;
             await addOrder(sender,  _order_id, store);
             return await sendMessagebyOrder(sender,  _order_id);
         }
         return false;
     } catch (error) {
-        sendTextMessage(sender,  error.toString())
+        sendTextMessage(sender, error.toString())
         return false;
     }
 };
@@ -152,7 +152,7 @@ const hasSelectedOrder = async (sender,  message) => {
         // await sendTextMessage(sender, "Please enter your order number: ");
         return true;
     }
-    await sendTextMessage(sender,  `You have an order(${order_id}) selected already!. Please say [new] to new return`);
+    await sendTextMessage(sender, `You have an order(${order_id}) selected already!. Please say [new] to new return`);
     await sendMessagebyOrder(sender,  order_id);
     return true;
 };
@@ -164,7 +164,7 @@ const deleteSender = async (_sender) => {
     const { sender } = await fetchSessionSender(_sender) || {};
     if (sender == undefined) return { success: true, message: "success" };
     await deleteById('sessions', { sender });
-    await sendTextMessage(sender,  'Please enter your store name:');
+    await sendTextMessage(sender, 'Please enter your store name:');
     return true;
 };
 const fetchSessionSender = async (sender) => {
@@ -261,9 +261,9 @@ const sendMessagebyOrder = async (sender,  order_id) => {
             public_url = toPublicURL(public_url);
             if (charged == false) await saveOrderIdBySender(sender,  { order_id, step: 1 });
             if (charged) {
-                await sendMessageButton(sender,  'Tracking', 'Click to tracking your shipback', public_url);
-                await sendMessageButton(sender,  'Download Label', 'Your shipback already return!. Please download label below', label_url, "false");
-                return await sendTextMessage(sender,  "Your order has been returned already! Please enter new order:");
+                await sendMessageButton(sender, 'Tracking', 'Click to tracking your shipback', public_url);
+                await sendMessageButton(sender, 'Download Label', 'Your shipback already return!. Please download label below', label_url, "false");
+                return await sendTextMessage(sender, "Your order has been returned already! Please enter new order:");
             }
             return await sendTemplate(sender,  public_url);
         }
@@ -274,9 +274,9 @@ const sendMessagebyOrder = async (sender,  order_id) => {
             await sendTemplate(sender,  public_url);
             return;
         }
-        await sendTextMessage(sender,  "Sorry, your order has not registered. Please enter again");
+        await sendTextMessage(sender, "Sorry, your order has not registered. Please enter again");
     } catch (error) {
-        await sendTextMessage(sender,  error.toString());
+        await sendTextMessage(sender, error.toString());
     }
 
 };
@@ -318,20 +318,20 @@ const toCondition = (object, terminate = ",") => {
     }
     return { condition, values };
 };
-const sendTextMessage = async (sender,  text) => {
+const sendTextMessage = async (sender, text) => {
     var payload = {
         message: {
             text: text
         },
         recipient: {
             id: sender
-        },
+        }
     };
     await httpPost('', payload, 'fb');
     return { success: true };
 }
-const sendTemplate = async (sender,  web_url) => {
-    await sendMessageButton(sender,  'Return shipback', 'Click button below to return shipback', web_url);
+const sendTemplate = async (sender, web_url) => {
+    await sendMessageButton(sender, 'Return shipback', 'Click button below to return shipback', web_url);
     return { success: true };
 }
 const toPublicURL = (public_url) => {
@@ -339,7 +339,7 @@ const toPublicURL = (public_url) => {
     const srb_web_url = 'https://staging.v2.shoprunback.com';
     return public_url.replace(srb_web_url, new_url);
 };
-const sendMessageButton = async (sender,  title, message, web_url, extension = "true") => {
+const sendMessageButton = async (sender, title, message, web_url, extension = "true") => {
     const payload = {
         recipient: {
             id: sender
@@ -372,8 +372,8 @@ const createShipback = async (order_id) => {
     return await httpPost('shipbacks', payload);
 }
 
-const httpHeaderFB = async (fb_token) => {
-    return { access_token: fb_token };
+const httpHeaderFB = (access_token = '') => {
+    return { access_token: access_token };
 }
 
 const httpHeaderSRB = (token = null) => {
