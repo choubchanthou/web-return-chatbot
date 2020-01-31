@@ -387,7 +387,7 @@ const httpHeaderSRB = (token = null) => {
 const httpPost = async (short_url = '', payload, type = 'srb') => {    
     const headers = { 'srb': httpHeaderSRB(auth_token), 'fb': httpHeaderFB(token) };
     const url = { 'srb': `${dashboard_url}/${short_url}`, 'fb': `${fb_url}/${short_url}` };
-    return await httpRequest(url[type], 'POST', payload, headers[type]);
+    return await httpRequest(url[type], 'POST', payload, headers[type]); 
 }
 const httpGet = async (short_url = '', type = 'srb') => {
     const headers = { 'srb': httpHeaderSRB(auth_token), 'fb': httpHeaderFB(token) };
