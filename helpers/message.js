@@ -115,5 +115,6 @@ export default {
     showEnterOrderText,
     notFoundStoreText,
     showEnterStoreText,
-    showSelectedOrderText
+    showSelectedOrderText,
+    persistentMenu
 }
