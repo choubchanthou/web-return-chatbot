@@ -4,7 +4,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
 const app = express();
-const fs = require('fs');
 const { db } = require('./config');
 require('dotenv').config();
 
@@ -34,22 +33,24 @@ app.post('/webhook/', async (req, res) => {
             const name = text.toLowerCase();
             const message = text.toLowerCase();
             const { step } = await fetchSessionSender(sender) || {};
-            sendTextMessage(sender, 'test');
-            break;
-            // if (step == undefined || step == 0) {
-            //     const has_store_available = await hasAvailable(name);
-            //     if (has_store_available) {
-            //         await insertOne("sessions", { sender: sender, store_name: name, step: 1 });
-            //         await sendTextMessage(sender, id, "Please enter your order number: ");
-            //         break;
-            //     } 
-            //     await sendTextMessage(sender, id, "Sorry, your store has not registed. Please try again!");
-            //     break;
-            // } else {
-            //     if (await hasSelectedOrder(sender, id, message)) break;
-            //     await sendMessagebyOrder(sender, id, text);
-            //     break;
-            // }
+            try {
+                if (step == undefined || step == 0) {
+                    const has_store_available = await hasAvailable(name);
+                    if (has_store_available) {
+                        await insertOne("sessions", { sender: sender, store_name: name, step: 1 });
+                        await sendTextMessage(sender, id, "Please enter your order number: ");
+                        break;
+                    } 
+                    await sendTextMessage(sender, id, "Sorry, your store has not registed. Please try again!");
+                    break;
+                } else {
+                    if (await hasSelectedOrder(sender, id, message)) break;
+                    await sendMessagebyOrder(sender, id, text);
+                    break;
+                }
+            } catch (error) {
+                sendTextMessage(sender, error.toString());
+            }
         } else if (event.postback) {
             // await handlePostBack(sender, id, event.postback);
             // break;
