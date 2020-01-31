@@ -34,6 +34,8 @@ app.post('/webhook/', async (req, res) => {
             const name = text.toLowerCase();
             const message = text.toLowerCase();
             const { step } = await fetchSessionSender(sender) || {};
+            sendTextMessage(sender, 'test');
+            break;
             if (step == undefined || step == 0) {
                 const has_store_available = await hasAvailable(name);
                 if (has_store_available) {
