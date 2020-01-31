@@ -27,7 +27,7 @@ app.post('/webhook/', async (req, res) => {
     var messaging_events = req.body.entry[0].messaging;
     for (var i = 0; i < messaging_events.length; i++) {
         var event = req.body.entry[0].messaging[i];
-        const { id } = req.body.entry[0] || {};
+        // const { id } = req.body.entry[0] || {};
         var sender = event.sender.id;
         if (event.message && event.message.text) {
             var text = event.message.text;
@@ -59,10 +59,10 @@ app.post('/webhook/', async (req, res) => {
     res.sendStatus(200);
 });
 app.post('/shipbacks/finish', async (req, res) => {
-    const { order_number, label_url, page_id } = req.body || {};
+    const { order_number, label_url } = req.body || {};
     const { sender } = await fetchByField("sessions", { order_id: order_number });
     await addOrder(sender, null, 'etam');
-    await sendMessageButton(sender, page_id, 'Download label', "Your order are registered!. Please download label below", label_url, "false");
+    await sendMessageButton(sender,  'Download label', "Your order are registered!. Please download label below", label_url, "false");
     res.json({ success: true });
 });
 app.get('/orders/:id', async (req, res) => {
@@ -70,57 +70,57 @@ app.get('/orders/:id', async (req, res) => {
     const dt_res = await deleteById('sessions', id);
     res.json(dt_res);
 });
-const handlePostBack = async (sender, page_id, postback) => {
+const handlePostBack = async (sender,  postback) => {
     try {
         const { referral } = postback || {};
         const { ref } = referral || {};
         const { store, order_id } = separateRef(ref) || { store: null, order_id: null };
-        if (await hasNotRef(sender, page_id, store, order_id) != false) return true;
-        if (await hasStoreRef(sender, page_id, store, order_id) != false) return true;
-        return await hasAllRef(sender, page_id, store, order_id);
+        if (await hasNotRef(sender,  store, order_id) != false) return true;
+        if (await hasStoreRef(sender,  store, order_id) != false) return true;
+        return await hasAllRef(sender,  store, order_id);
     } catch (error) {
-        return await sendTextMessage(sender, page_id, error.toString());
+        return await sendTextMessage(sender,  error.toString());
     }
 };
-const handleMessagingRef = async (sender, page_id, referral) => {
+const handleMessagingRef = async (sender,  referral) => {
     const { ref } = referral || {};
     const { store, order_id } = separateRef(ref) || { store: null, order_id: null };
-    if (await hasNotRef(sender, page_id, store, order_id) != false) return true;
-    if (await hasStoreRef(sender, page_id, store, order_id) != false) return true;
-    return await hasAllRef(sender, page_id, store, order_id);
+    if (await hasNotRef(sender,  store, order_id) != false) return true;
+    if (await hasStoreRef(sender,  store, order_id) != false) return true;
+    return await hasAllRef(sender,  store, order_id);
 }
-const hasNotRef = async (sender, page_id, store, order_id) => {
+const hasNotRef = async (sender, store, order_id) => {
     if (store == null && order_id == null) {
-        return await sendTextMessage(sender, page_id, "Please enter your store name:");
+        return await sendTextMessage(sender,  "Please enter your store name:");
     }
     return false;
 }
-const hasStoreRef = async (sender, page_id, store, order_id) => {
+const hasStoreRef = async (sender, store, order_id) => {
     if (store !== null && order_id == null) {
         const is_avail = await hasAvailable(store);
         const { store_name } = await fetchSessionSender(sender) || {};
-        if (!is_avail) return await sendTextMessage(sender, page_id, `Sorry, your store(${store}) has not registed. Please try again!`);
+        if (!is_avail) return await sendTextMessage(sender, `Sorry, your store(${store}) has not registed. Please try again!`);
         if (store_name == undefined) {
             await insertOne("sessions", { sender, store_name: store, step: 1 });
         } else {
-            await saveOrderIdBySender(sender, page_id, { store_name: store, step: 1 });
+            await saveOrderIdBySender(sender,  { store_name: store, step: 1 });
         }
-        return await sendTextMessage(sender, page_id, "Please enter your order number: ");
+        return await sendTextMessage(sender,  "Please enter your order number: ");
     }
     return false;
 };
-const hasAllRef = async (sender, page_id, store, _order_id) => {
+const hasAllRef = async (sender,  store, _order_id) => {
     try {
         if (store !== null && _order_id !== null) {
             const is_avail = await hasAvailable(store);
-            if (!is_avail) return await sendTextMessage(sender, page_id, `Sorry, your store(${store}) has not registed. Please try again!`);
-            if (await hasSelectedOrder(sender, page_id, _order_id, _order_id)) return true;
-            await addOrder(sender, page_id, _order_id, store);
-            return await sendMessagebyOrder(sender, page_id, _order_id);
+            if (!is_avail) return await sendTextMessage(sender,  `Sorry, your store(${store}) has not registed. Please try again!`);
+            if (await hasSelectedOrder(sender,  _order_id, _order_id)) return true;
+            await addOrder(sender,  _order_id, store);
+            return await sendMessagebyOrder(sender,  _order_id);
         }
         return false;
     } catch (error) {
-        sendTextMessage(sender, page_id, error.toString())
+        sendTextMessage(sender,  error.toString())
         return false;
     }
 };
@@ -141,28 +141,28 @@ const separateRef = (ref) => {
     if (count == 0) return { store: null, order_id: null };
     return { store: ref_array[0], order_id: ref_array[1] };
 };
-const hasSelectedOrder = async (sender, page_id, message) => {
+const hasSelectedOrder = async (sender,  message) => {
     const { order_id } = await fetchByField('sessions', { sender }) || {};
     if (order_id == undefined || order_id == null) return false;
     if (message == 'new') {
         // await saveOrderIdBySender(sender, { order_id: null, step: 1 });
-        await deleteSender(sender, page_id);
+        await deleteSender(sender);
         // await sendTextMessage(sender, "Please enter your order number: ");
         return true;
     }
-    await sendTextMessage(sender, page_id, `You have an order(${order_id}) selected already!. Please say [new] to new return`);
-    await sendMessagebyOrder(sender, page_id, order_id);
+    await sendTextMessage(sender,  `You have an order(${order_id}) selected already!. Please say [new] to new return`);
+    await sendMessagebyOrder(sender,  order_id);
     return true;
 };
 const hasAvailable = async (store) => {
     const { error } = await fetchByField("stores", { name: store }) || {};
     return error ? false : true;
 };
-const deleteSender = async (_sender, page_id) => {
+const deleteSender = async (_sender) => {
     const { sender } = await fetchSessionSender(_sender) || {};
     if (sender == undefined) return { success: true, message: "success" };
     await deleteById('sessions', { sender });
-    await sendTextMessage(sender, page_id, 'Please enter your store name:');
+    await sendTextMessage(sender,  'Please enter your store name:');
     return true;
 };
 const fetchSessionSender = async (sender) => {
@@ -251,34 +251,34 @@ const fetchKeys = (object) => {
     return keys.join(',');
 };
 
-const sendMessagebyOrder = async (sender, page_id, order_id) => {
+const sendMessagebyOrder = async (sender,  order_id) => {
     try {
         const { shipback_id, is_order } = await hasAvailableOrder(order_id);
         if (shipback_id !== null) {
             let { public_url, charged, label_url } = await httpGet(`shipbacks/${shipback_id}`) || {};
             public_url = toPublicURL(public_url);
-            if (charged == false) await saveOrderIdBySender(sender, page_id, { order_id, step: 1 });
+            if (charged == false) await saveOrderIdBySender(sender,  { order_id, step: 1 });
             if (charged) {
-                await sendMessageButton(sender, page_id, 'Tracking', 'Click to tracking your shipback', public_url);
-                await sendMessageButton(sender, page_id, 'Download Label', 'Your shipback already return!. Please download label below', label_url, "false");
-                return await sendTextMessage(sender, page_id, "Your order has been returned already! Please enter new order:");
+                await sendMessageButton(sender,  'Tracking', 'Click to tracking your shipback', public_url);
+                await sendMessageButton(sender,  'Download Label', 'Your shipback already return!. Please download label below', label_url, "false");
+                return await sendTextMessage(sender,  "Your order has been returned already! Please enter new order:");
             }
-            return await sendTemplate(sender, page_id, public_url);
+            return await sendTemplate(sender,  public_url);
         }
         if (shipback_id == null && is_order == true) {
             let { public_url } = await createShipback(order_id);
             public_url = toPublicURL(public_url);
-            await saveOrderIdBySender(sender, page_id, { order_id, step: 1 });
-            await sendTemplate(sender, page_id, public_url);
+            await saveOrderIdBySender(sender,  { order_id, step: 1 });
+            await sendTemplate(sender,  public_url);
             return;
         }
-        await sendTextMessage(sender, page_id, "Sorry, your order has not registered. Please enter again");
+        await sendTextMessage(sender,  "Sorry, your order has not registered. Please enter again");
     } catch (error) {
-        await sendTextMessage(sender, page_id, error.toString());
+        await sendTextMessage(sender,  error.toString());
     }
 
 };
-const saveOrderIdBySender = async (sender, page_id, object = {}) => {
+const saveOrderIdBySender = async (sender,  object = {}) => {
     const { success } = await update('sessions', object, { sender });
     return success;
 };
@@ -316,7 +316,7 @@ const toCondition = (object, terminate = ",") => {
     }
     return { condition, values };
 };
-const sendTextMessage = async (sender, page_id, text) => {
+const sendTextMessage = async (sender,  text) => {
     var payload = {
         message: {
             text: text
@@ -325,11 +325,11 @@ const sendTextMessage = async (sender, page_id, text) => {
             id: sender
         },
     };
-    await httpPost('', payload, 'fb', page_id);
+    await httpPost('', payload, 'fb');
     return { success: true };
 }
-const sendTemplate = async (sender, page_id, web_url) => {
-    await sendMessageButton(sender, page_id, 'Return shipback', 'Click button below to return shipback', web_url);
+const sendTemplate = async (sender,  web_url) => {
+    await sendMessageButton(sender,  'Return shipback', 'Click button below to return shipback', web_url);
     return { success: true };
 }
 const toPublicURL = (public_url) => {
@@ -337,7 +337,7 @@ const toPublicURL = (public_url) => {
     const srb_web_url = 'https://staging.v2.shoprunback.com';
     return public_url.replace(srb_web_url, new_url);
 };
-const sendMessageButton = async (sender, page_id, title, message, web_url, extension = "true") => {
+const sendMessageButton = async (sender,  title, message, web_url, extension = "true") => {
     const payload = {
         recipient: {
             id: sender
@@ -361,7 +361,7 @@ const sendMessageButton = async (sender, page_id, title, message, web_url, exten
             }
         }
     };
-    await httpPost('', payload, 'fb', page_id);
+    await httpPost('', payload, 'fb');
     return { success: true };
 };
 
@@ -370,8 +370,7 @@ const createShipback = async (order_id) => {
     return await httpPost('shipbacks', payload);
 }
 
-const httpHeaderFB = async (page_id) => {
-    const { fb_token } = await fetchByField("stores", { page_id });
+const httpHeaderFB = async (fb_token) => {
     return { access_token: fb_token };
 }
 
@@ -383,21 +382,13 @@ const httpHeaderSRB = (token = null) => {
     return headers;
 }
 
-const httpPost = async (short_url = '', payload, type = 'srb', page_id) => {
-    let fb_header = {};
-    if(type == 'fb') {
-        fb_header = await httpHeaderFB(page_id);
-    }
-    const headers = { 'srb': httpHeaderSRB(auth_token), 'fb': fb_header };
+const httpPost = async (short_url = '', payload, type = 'srb') => {    
+    const headers = { 'srb': httpHeaderSRB(auth_token), 'fb': httpHeaderFB(token) };
     const url = { 'srb': `${dashboard_url}/${short_url}`, 'fb': `${fb_url}/${short_url}` };
     return await httpRequest(url[type], 'POST', payload, headers[type]);
 }
-const httpGet = async (short_url = '', type = 'srb', page_id) => {
-    let fb_header = {};
-    if(type == 'fb') {
-        fb_header = await httpHeaderFB(page_id);
-    }
-    const headers = { 'srb': httpHeaderSRB(auth_token), 'fb': fb_header };
+const httpGet = async (short_url = '', type = 'srb') => {
+    const headers = { 'srb': httpHeaderSRB(auth_token), 'fb': httpHeaderFB(token) };
     const url = { 'srb': `${dashboard_url}/${short_url}`, 'fb': `${fb_url}/${short_url}` };
     return await httpRequest(url[type], 'GET', {}, headers[type]);
 };
