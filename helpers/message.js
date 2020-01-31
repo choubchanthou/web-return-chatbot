@@ -82,8 +82,38 @@ const returnShipback = (url) => {
     });
 }
 
+const notFoundOrderText = {
+    text: 'Sorry, your order has not registered. Please enter again'
+}
+
+const showEnterOrderText = {
+    text: 'Please enter your order number:'
+}
+
+const notFoundStoreText = {
+    text: 'Sorry, your store has not registed. Please try again!'
+}
+
+const showEnterStoreText = {
+    text: 'Please enter your store name:'
+}
+
+const showSelectedOrderText = (order_id) => {
+    return {
+        text: `You have an order(${order_id}) selected already!. Please say [new] to new return`
+    }
+}
+
 export default {
     getStarted,
     setPreferencesButton,
-    messageButton
+    messageButton,
+    downloadLabel,
+    showTracking,
+    returnShipback,
+    notFoundOrderText,
+    showEnterOrderText,
+    notFoundStoreText,
+    showEnterStoreText,
+    showSelectedOrderText
 }
