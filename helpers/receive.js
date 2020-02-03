@@ -37,6 +37,6 @@ const displayStoreList = async (senderId, message, access_token) => {
 
 module.exports = {
     handleReceiveMessage,
-    handlePostbackMessage
+    handlePostbackMessage,
     handleReferralMessage
 }
