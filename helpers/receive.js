@@ -13,7 +13,7 @@ const handleReceiveMessage = async (event, page_id) => {
     }
 };
 
-const handlePostbackMessage = (event, page_id) => {
+const handlePostbackMessage = async (event, page_id) => {
     const { access_token } = await query.user.find({ page_id });
     const message = event.postback;
     const senderId = event.sender.id;
