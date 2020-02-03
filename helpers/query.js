@@ -117,6 +117,7 @@ class Store extends Query {
 
     async hasStore(page_id) {
         const stores = await this.find({ page_id });
+        console.log(page_id);
         if(stores.length > 0) return stores;
         return false;
     }

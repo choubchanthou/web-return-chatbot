@@ -15,7 +15,7 @@ router.post('/shipbacks/finish', async (req, res) => {
 
 router.get('/shipbacks/test', async (req, res) => {
     const page_id = '102876274588508';
-    const data = await query.user.fetchUser({ page_id });
+    const data = await query.store.hasStore(page_id);
     res.json(data);
 });
 
