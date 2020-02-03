@@ -1,4 +1,5 @@
 const { db } = require('../config');
+const isObject = require('lodash/isArray');
 class Query {
     constructor(table) {
         this.table = table;
@@ -74,7 +75,6 @@ class Query {
             db.all(sql, values, (err, data) => {
                 if (err) resolve(err);
                 if (data == undefined) resolve({ error: true });
-                if(data.length == 1) resolve(data[0]);
                 resolve(data);
             });
         });
@@ -113,6 +113,12 @@ class Query {
 class Store extends Query {
     constructor() {
         super('stores');
+    }
+
+    async hasStore(page_id) {
+        const stores = await this.find({ page_id });
+        if(stores.length > 0) return stores;
+        return false;
     }
 }
 

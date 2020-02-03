@@ -119,9 +119,31 @@ const showEnterStoreText = {
     text: 'Please enter your store name:'
 }
 
+const unavailableStoreText = {
+    text: 'Unavailable store in this page'
+}
+
 const showSelectedOrderText = (order_id) => {
     return {
         text: `You have an order(${order_id}) selected already!. Please say [new] to new return`
+    }
+}
+
+const setButtons = (title, payload) => {
+    return [
+        {
+            type: "postback",
+            title,
+            payload
+        }
+    ]
+}
+const setElement = (options = {}) => {
+    const { title, image_url, payload } = options;
+    return {
+        title,
+        image_url,
+        buttons: setButtons(title, payload)
     }
 }
 
@@ -139,5 +161,7 @@ module.exports = {
     showSelectedOrderText,
     persistentMenu,
     downloadVoucher,
-    messageButtonPostback
+    messageButtonPostback,
+    setElement,
+    unavailableStoreText
 }

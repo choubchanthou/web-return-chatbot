@@ -45,7 +45,7 @@ const sendReadReceipt = async (recipientId, access_token) => {
 
 const sendTextEnterOrderId = async (recipientId, access_token) => {
     return await sendMessage(recipientId, message.showEnterOrderText, access_token);
-}
+};
 
 const sendDownloadLabelVoucher = async (recipientId, urls ,access_token) => {
     return await sendMessage(
@@ -56,11 +56,31 @@ const sendDownloadLabelVoucher = async (recipientId, urls ,access_token) => {
         ],
         access_token
     )
-}
+};
 
-const sendStoreList = async (recipientId, elements, access_token) => {
-    return await sendMessage(recipientId, message.messageButtonPostback(elements), access_token);
-}
+const sendUnavailableStore = async (recipientId, access_token) => {
+    return await sendMessage(
+        recipientId,
+        message.unavailableStoreText,
+        access_token
+    );
+};
+
+const sendStoreList = async (recipientId, stores, access_token) => {
+    const messageArray = [];
+    for(let store of stores) {
+        messageArray.push(message.setElement({
+            title: store.name,
+            image_url: store.logo_url,
+            payload: store.fb_token
+        }));
+    }
+    return await sendMessage(
+        recipientId, 
+        messageArray, 
+        access_token
+    );
+};
 
 
 module.exports = {
@@ -68,5 +88,6 @@ module.exports = {
     sendReadReceipt,
     sendTextEnterOrderId,
     sendDownloadLabelVoucher,
-    sendStoreList
+    sendStoreList,
+    sendUnavailableStore
 };
