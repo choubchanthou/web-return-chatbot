@@ -19,7 +19,7 @@ const handlePostbackMessage = async (event, page_id) => {
     const senderId = event.sender.id;
 };
 
-const handleReferralMessage = (event, page_id) => {
+const handleReferralMessage = async (event, page_id) => {
     const { access_token } = await query.user.find({ page_id });
     const message = event.referral;
     const senderId = event.sender.id;
