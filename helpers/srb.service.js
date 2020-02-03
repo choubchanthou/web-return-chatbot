@@ -1,5 +1,5 @@
-import { DASHBOARD_URL } from '../config';
-import { httpRequest } from './http';
+const { DASHBOARD_URL } = require('../config');
+const { httpRequest } = require('./http');
 
 const httpPost = async (endpoint, payload, token = null) => { 
     let headers = { 'Content-Type': 'application/json' };

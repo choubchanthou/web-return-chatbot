@@ -1,7 +1,7 @@
-import { FB_URL } from '../config';
-import { httpRequest } from './http';
-import castArray from 'lodash/castArray';
-import isEmpty from 'lodash/isEmpty';
+const { FB_URL } = require('../config');
+const { httpRequest } = require('./http');
+const castArray = require('lodash/castArray');
+const isEmpty = require('lodash/isEmpty');
 
 const callAPI = async (endpoint, messageDataArray, queryParams = {}) => {
 	const url = `${FB_URL}/${endpoint}`;
@@ -23,7 +23,7 @@ const callMessengerProfileAPI = async (messageDataArray, access_token) => {
 	return await callAPI('messenger_profile', messageDataArray, { access_token });
 };
 
-export default {
+module.exports = {
 	callMessagesAPI,
 	callMessengerProfileAPI,
 };

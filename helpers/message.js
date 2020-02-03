@@ -1,4 +1,4 @@
-import { WEB_URL } from '../config';
+const { WEB_URL } = require('../config');
 
 const toPublicURL = (url) => {
     const srb_web_url = 'https://staging.v2.shoprunback.com';
@@ -22,8 +22,7 @@ const persistentMenu = {
             'locale': 'default',
             'composer_input_disabled': false,
             'call_to_actions': [
-                setPreferencesButton,
-                changeGiftButton
+                setPreferencesButton
             ]
         }
     ]
@@ -104,7 +103,7 @@ const showSelectedOrderText = (order_id) => {
     }
 }
 
-export default {
+module.exports = {
     getStarted,
     setPreferencesButton,
     messageButton,

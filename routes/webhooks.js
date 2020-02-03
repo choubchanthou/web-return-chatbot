@@ -1,5 +1,5 @@
+const fbReceive = require('../helpers/receive');
 const express = require('express');
-import fbReceive from '../helpers/receive';
 const router = express.Router();
 
 router.get('/', (req, res) => {

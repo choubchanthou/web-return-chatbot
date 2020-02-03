@@ -1,6 +1,6 @@
-import fbAPI from './fb.service';
-import castArray from 'lodash/castArray';
-import message from './message';
+const fbAPI = require('./fb.service');
+const castArray = require('lodash/castArray');
+const message = require('./message');
 
 const typingOn = (recipientId) => {
     return {
@@ -50,7 +50,7 @@ const sendTextEnterOrderId = async (recipientId, access_token) => {
 }
 
 
-export default {
+module.exports = {
     sendMessage,
     sendReadReceipt,
     sendTextEnterOrderId

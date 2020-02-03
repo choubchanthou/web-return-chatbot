@@ -1,4 +1,4 @@
-import request from 'request';
+const request = require('request');
 
 const httpRequest = (url, method, json = {}, headers = {}, retries = 5) => {
     if (retries < 0) {
@@ -29,6 +29,6 @@ const httpRequest = (url, method, json = {}, headers = {}, retries = 5) => {
     });
 };
 
-export default {
+module.exports = {
     httpRequest
 };
