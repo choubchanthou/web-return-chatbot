@@ -15,7 +15,6 @@ router.post('/', (req, res) => {
     const data = req.body;
     if (data.object === 'page') {
         data.entry.forEach((pageEntry) => {
-            console.log(pageEntry);
             pageEntry.messaging.forEach((messagingEvent) => {
                 if (messagingEvent.message) {
                     fbReceive.handleReceiveMessage(messagingEvent, pageEntry.id);
