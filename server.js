@@ -2,17 +2,18 @@
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const request = require('request');
+// const request = require('request');
 const app = express();
-const { db } = require('./config');
+// const { db } = require('./config');
 require('dotenv').config();
 
 const port = process.env.PORT || 3000;
-const dashboard_url = process.env.DASHBOARD_URL;
-const auth_token = process.env.AUTH_TOKEN;
-const token = process.env.FB_TOKEN || "";
-const fb_url = process.env.FB_URL;
+// const dashboard_url = process.env.DASHBOARD_URL;
+// const auth_token = process.env.AUTH_TOKEN;
+// const token = process.env.FB_TOKEN || "";
+// const fb_url = process.env.FB_URL;
 const { store } = require('./helpers/query');
+const webhooks = require('./routes/webhooks');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
