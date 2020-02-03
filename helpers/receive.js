@@ -3,7 +3,7 @@ const query = require('./query');
 
 const handleReceiveMessage = async (event, page_id) => {
     try {
-        const { access_token } = await query.user.fetchUser({ page_id });
+        const { access_token } = await query.user.fetchUser(page_id);
         const message = event.message;
         const senderId = event.sender.id;
         await fbSend.sendReadReceipt(senderId, access_token);
@@ -16,13 +16,13 @@ const handleReceiveMessage = async (event, page_id) => {
 };
 
 const handlePostbackMessage = async (event, page_id) => {
-    const { access_token } = await query.user.fetchUser({ page_id });
+    const { access_token } = await query.user.fetchUser(page_id);
     const message = event.postback;
     const senderId = event.sender.id;
 };
 
 const handleReferralMessage = async (event, page_id) => {
-    const { access_token } = await query.user.find({ page_id });
+    const { access_token } = await query.user.fetchUser(page_id);
     const message = event.referral;
     const senderId = event.sender.id;
 };
