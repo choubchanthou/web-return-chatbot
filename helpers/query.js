@@ -132,6 +132,11 @@ class User extends Query {
     constructor() {
         super('users');
     }
+
+    async fetchUser(page_id) {
+        const user = await this.find({ page_id });
+        return user[0] || {};
+    }
 }
 
 const store = new Store();
