@@ -17,11 +17,11 @@ router.post('/', (req, res) => {
         data.entry.forEach((pageEntry) => {
             pageEntry.messaging.forEach((messagingEvent) => {
                 console.log({ messagingEvent });
-                // if (messagingEvent.message) {
-                //     fbReceive.handleReceiveMessage(messagingEvent);
-                // } else {
-                //     console.log('Webhook received unknown messagingEvent: ', messagingEvent);
-                // }
+                if (messagingEvent.message) {
+                    fbReceive.handleReceiveMessage(messagingEvent);
+                } else {
+                    console.log('Webhook received unknown messagingEvent: ', messagingEvent);
+                }
             });
         });
     }
