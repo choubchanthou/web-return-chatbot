@@ -13,13 +13,12 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
     res.sendStatus(200);
     const data = req.body;
-    const page_id = req.body[0].id || '';
-    if(page_id == '') return;
     if (data.object === 'page') {
         data.entry.forEach((pageEntry) => {
+            console.log(pageEntry);
             pageEntry.messaging.forEach((messagingEvent) => {
                 if (messagingEvent.message) {
-                    fbReceive.handleReceiveMessage(messagingEvent, page_id);
+                    fbReceive.handleReceiveMessage(messagingEvent, pageEntry.id);
                 } else {
                     console.log('Webhook received unknown messagingEvent: ', messagingEvent);
                 }
