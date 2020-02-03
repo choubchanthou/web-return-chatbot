@@ -1,6 +1,5 @@
-import express from 'express';
+const express = require('express');
 // import fbReceive from '../helpers/receive';
-
 const router = express.Router();
 router.get('/', (req, res) => {
     if (req.query['hub.verify_token'] === process.env.WEBHOOK_TOKEN) {
@@ -9,4 +8,4 @@ router.get('/', (req, res) => {
         res.send('Error, wrong token');
     }
 });
-export default router;
+module.exports = router;
