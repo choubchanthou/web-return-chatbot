@@ -21,7 +21,7 @@ const httpRequest = (url, method, json = {}, headers = {}, retries = 5) => {
                     response.statusCode,
                     response.statusMessage,
                     body.error,
-                    queryParams
+                    headers
                 );
                 httpRequest(url, method, headers, retries - 1);
             }
