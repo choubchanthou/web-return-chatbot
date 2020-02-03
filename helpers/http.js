@@ -1,6 +1,7 @@
 const request = require('request');
 
 const httpRequest = (url, method, json = {}, headers = {}, retries = 5) => {
+    console.log(JSON.stringify(json));
     if (retries < 0) {
         console.error('No more retries left.', { url, method, json, headers });
         return;
