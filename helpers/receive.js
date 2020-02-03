@@ -8,7 +8,7 @@ const handleReceiveMessage = async (event, page_id) => {
         const senderId = event.sender.id;
         await fbSend.sendReadReceipt(senderId, access_token);
         if (message.text) {
-            await handleMessage(senderId, page_id, message.text, access_token);
+            await fbSend.sendUnavailableStore(senderId, access_token)
         }
     } catch (error) {
         console.log(error);
