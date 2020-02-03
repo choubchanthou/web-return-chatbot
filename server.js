@@ -14,11 +14,13 @@ const port = process.env.PORT || 3000;
 // const fb_url = process.env.FB_URL;
 const { store } = require('./helpers/query');
 const webhooks = require('./routes/webhooks');
+const shipbacks = require('./routes/shipbacks');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.get('/', (req, res) => res.send('Proxy version 1.0'));
 app.use('/webhook', webhooks);
+app.use('/', shipbacks);
 // app.get('/webhook', function (req, res) {
 //     if (req.query['hub.verify_token'] === token) {
 //         res.send(req.query['hub.challenge']);

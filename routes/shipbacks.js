@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const query = require('../helpers/query');
 
-post('/shipbacks/finish', async (req, res) => {
+router.post('/shipbacks/finish', async (req, res) => {
     const { order_number, label_url, voucher_url, page_id } = req.body || {};
     const { sender } = await query.session.find({ order_id: order_number });
     const { access_token } = await query.user.find({ page_id });
