@@ -77,7 +77,7 @@ const sendStoreList = async (recipientId, stores, access_token) => {
     }
     return await sendMessage(
         recipientId, 
-        messageArray, 
+        message.messageButtonPostback(messageArray),
         access_token
     );
 };
