@@ -57,10 +57,15 @@ const sendDownloadLabelVoucher = async (recipientId, urls ,access_token) => {
     )
 }
 
+const sendStoreList = async (recipientId, buttons, access_token) => {
+    return await sendMessage(recipientId, message.messageButtonPostback(buttons), access_token);
+}
+
 
 module.exports = {
     sendMessage,
     sendReadReceipt,
     sendTextEnterOrderId,
-    sendDownloadLabelVoucher
+    sendDownloadLabelVoucher,
+    sendStoreList
 };

@@ -36,7 +36,7 @@ const getStarted = {
 };
 
 const messageButton = (options) => {
-    const { url, message, title} = options || {};
+    const { url, message, title } = options || {};
     return {
         attachment: {
             type: "template",
@@ -50,6 +50,19 @@ const messageButton = (options) => {
         }
     };
 };
+
+const messageButtonPostback = (buttons) => {
+    return {
+        attachment: {
+            type: "template",
+            payload: {
+                template_type: "button",
+                text: "Please select your store:",
+                buttons: buttons
+            }
+        }
+    }
+}
 
 const showTracking = (url) => {
     const title = 'Tracking';
@@ -126,5 +139,6 @@ module.exports = {
     showEnterStoreText,
     showSelectedOrderText,
     persistentMenu,
-    downloadVoucher
+    downloadVoucher,
+    messageButtonPostback
 }
