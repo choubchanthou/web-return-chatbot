@@ -53,12 +53,13 @@ const sendDownloadLabelVoucher = async (recipientId, urls ,access_token) => {
         [
             message.downloadLabel(urls.label_url),
             message.downloadVoucher(urls.voucher_url)
-        ]
+        ],
+        access_token
     )
 }
 
-const sendStoreList = async (recipientId, buttons, access_token) => {
-    return await sendMessage(recipientId, message.messageButtonPostback(buttons), access_token);
+const sendStoreList = async (recipientId, elements, access_token) => {
+    return await sendMessage(recipientId, message.messageButtonPostback(elements), access_token);
 }
 
 

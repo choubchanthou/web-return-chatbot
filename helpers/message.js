@@ -51,14 +51,13 @@ const messageButton = (options) => {
     };
 };
 
-const messageButtonPostback = (buttons) => {
+const messageButtonPostback = (elements) => {
     return {
         attachment: {
             type: "template",
             payload: {
-                template_type: "button",
-                text: "Please select your store:",
-                buttons: buttons
+                template_type: "generic",
+                elements: elements
             }
         }
     }
