@@ -4,9 +4,7 @@ const message = require('./message');
 
 const typingOn = (recipientId) => {
     return {
-        recipient: {
-            id: recipientId,
-        },
+        recipient: { id: recipientId },
         sender_action: 'typing_on'
     };
 };
@@ -37,21 +35,32 @@ const sendMessage = async (recipientId, messagePayloads, access_token) => {
     ], access_token);
 };
 
-const sendReadReceipt = (recipientId, access_token) => {
+const sendReadReceipt = async (recipientId, access_token) => {
     const messageData = {
         recipient: { id: recipientId },
         sender_action: 'mark_seen'
     };
-    fbAPI.callMessagesAPI(messageData, access_token);
+    await fbAPI.callMessagesAPI(messageData, access_token);
 };
 
 const sendTextEnterOrderId = async (recipientId, access_token) => {
     return await sendMessage(recipientId, message.showEnterOrderText, access_token);
 }
 
+const sendDownloadLabelVoucher = async (recipientId, urls ,access_token) => {
+    return await sendMessage(
+        recipientId,
+        [
+            message.downloadLabel(urls.label_url),
+            message.downloadVoucher(urls.voucher_url)
+        ]
+    )
+}
+
 
 module.exports = {
     sendMessage,
     sendReadReceipt,
-    sendTextEnterOrderId
+    sendTextEnterOrderId,
+    sendDownloadLabelVoucher
 };

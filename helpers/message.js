@@ -71,6 +71,16 @@ const downloadLabel = (url) => {
     });
 }
 
+const downloadVoucher = (url) => {
+    const title = 'Download Voucher';
+    const message = 'Your shipback already return!. Please download voucher below';
+    return messageButton({
+        title,
+        url,
+        message
+    });
+}
+
 const returnShipback = (url) => {
     const title = 'Return shipback';
     const message = 'Click button below to return shipback';
@@ -115,5 +125,6 @@ module.exports = {
     notFoundStoreText,
     showEnterStoreText,
     showSelectedOrderText,
-    persistentMenu
+    persistentMenu,
+    downloadVoucher
 }
