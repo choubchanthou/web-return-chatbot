@@ -16,8 +16,8 @@ const { store } = require('./helpers/query');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use('/webhook', webhooks);
 app.get('/', (req, res) => res.send('Proxy version 1.0'));
+app.use('/webhook', webhooks);
 // app.get('/webhook', function (req, res) {
 //     if (req.query['hub.verify_token'] === token) {
 //         res.send(req.query['hub.challenge']);
