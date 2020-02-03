@@ -17,7 +17,7 @@ const httpRequest = (url, method, json = {}, headers = {}, retries = 5) => {
                 resolve(body);
             } else {
                 console.error(
-                    `Failed calling Messenger API endpoint ${endPoint}`,
+                    `Failed calling Messenger API endpoint ${url}`,
                     response.statusCode,
                     response.statusMessage,
                     body.error,
