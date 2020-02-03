@@ -8,7 +8,7 @@ const callAPI = async (endpoint, messageDataArray, queryParams = {}) => {
 	const [payload, ...queue] = castArray(messageDataArray);
 	await httpRequest(url, 'POST', payload, queryParams);
 	if (!isEmpty(queue)) {
-        return await callAPI(endPoint, queue, queryParams);
+        return await callAPI(endpoint, queue, queryParams);
     }
 	return;
 }
