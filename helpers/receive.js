@@ -7,3 +7,7 @@ const handleReceiveMessage = (event) => {
     fbSend.sendReadReceipt(senderId);
     if (message.text) { fbSend.sendTextEnterOrderId(senderId, access_token); }
 };
+
+export default {
+    handleReceiveMessage
+}
