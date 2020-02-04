@@ -19,6 +19,7 @@ const handlePostbackMessage = async (event, page_id) => {
     const { access_token } = await query.user.fetchUser(page_id);
     const message = event.postback;
     const senderId = event.sender.id;
+    await fbSend.sendMessage(senderId, { text: JSON.stringify(message) }, access_token);
 };
 
 const handleReferralMessage = async (event, page_id) => {
