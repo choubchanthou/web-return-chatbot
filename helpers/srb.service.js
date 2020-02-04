@@ -21,8 +21,7 @@ const httpGET = async (endpoint, token = null) => {
 
 const fetchShipback = async (shipback_id, token = null) => {
     const endpoint = `shipbacks/${shipback_id}`;
-    const { shipback } = await httpGET(endpoint, token) || {};
-    return shipback;
+    return await httpGET(endpoint, token);
 }
 
 const fetchOrder = async (order_id, token = null) => {

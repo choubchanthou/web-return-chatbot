@@ -17,11 +17,11 @@ router.post('/shipbacks/finish', async (req, res) => {
 router.get('/shipbacks/test', async (req, res) => {
     // const page_id = '102876274588508';
     // const data = await query.store.hasStore(page_id);
-    const orderId = '212124';
+    const orderId = '01a74af0-9687-4d81-ac1e-06e59f304c16';
     const token = 'HBAKqGDvojdVSZhsVsbE9jrYYoKSnC285-osaZAPMi-zpvsWEg';
-    const order = await srbAPI.fetchOrder(orderId, token);
-    console.log(order);
-    res.json(order);
+    const {public_url} = await srbAPI.fetchShipback(orderId, token);
+    console.log(public_url);
+    res.json(public_url);
 });
 
 module.exports = router;
