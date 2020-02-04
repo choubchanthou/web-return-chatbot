@@ -63,22 +63,23 @@ const handleMessage = async (senderId, page_id, message, access_token) => {
 const handleReturnMessage = async (sender, store_name, message, access_token) => {
     const { token } = await query.store.fetchStore(store_name);
     if (!token) throw new TypeError("Unauthorize");
-    const { shipback_id , order_number } = await srbAPI.fetchOrder(message, token);
+    const { order_number } = await srbAPI.fetchOrder(message, token);
     if (order_number == undefined) return await fbSend.sendTryEnterOrder(sender, access_token);
-    return await handleMessageOrder(sender, shipback_id, order_number, access_token, token);
+    return await handleMessageOrder(sender, order_number, access_token, token);
 };
 
-const handleMessageOrder = async (sender, shipback_id, order_number, access_token, token) => {
+const handleMessageOrder = async (sender, order_number, access_token, token) => {
+    const { shipback_id } = await query.session.fetchSession(sender) || {};
      if(shipback_id != undefined) {
         const { public_url, charged, label_url, voucher_url } = await srbAPI.fetchShipback(shipback_id, token);
-        console.log({ public_url, charged, label_url, voucher_url });
         if (charged) {
             await fbSend.sendTracking(sender, public_url, access_token);
             return await fbSend.sendDownloadLabelVoucher(sender, { label_url, voucher_url }, access_token);
         }
         return await fbSend.sendReturnShipback(sender, public_url, access_token);
     }
-    const { public_url } = await srbAPI.createShipback(order_number, token);
+    const { public_url, id } = await srbAPI.createShipback(order_number, token);
+    await query.session.update({ shipback_id: id }, { sender });
     return await fbSend.sendReturnShipback(sender, public_url, access_token);
 }
 

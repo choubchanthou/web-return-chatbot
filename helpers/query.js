@@ -142,6 +142,12 @@ class Session extends Query {
         }
         return false;
     }
+
+    async fetchSession(sender) {
+        const session = await this.find({ sender });
+        if(session.length > 0) return session[0];
+        return {};
+    }
 }
 
 class User extends Query {
