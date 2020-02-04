@@ -69,18 +69,25 @@ const handleReturnMessage = async (sender, store_name, message, access_token) =>
 };
 
 const handleMessageOrder = async (sender, order_number, access_token, token) => {
-    const { shipback_id } = await query.session.fetchSession(sender) || {};
-     if(shipback_id != undefined) {
-        const { public_url, charged, label_url, voucher_url } = await srbAPI.fetchShipback(shipback_id, token);
+    const shipbacks = await srbAPI.createShipback(order_number, token);
+    const shipback_id = shipbacks.id;
+    if(shipback_id == undefined) {
+        const messageRes = shipbacks.shipback.errors[0];
+        let arrayMessage = messageRes.split('(');
+        arrayMessage = arrayMessage[arrayMessage.length -1];
+        arrayMessage = arrayMessage.split(')');
+        const { public_url, charged, label_url, voucher_url } = await srbAPI.fetchShipback(arrayMessage[0], token);
         if (charged) {
             await fbSend.sendTracking(sender, public_url, access_token);
             return await fbSend.sendDownloadLabelVoucher(sender, { label_url, voucher_url }, access_token);
         }
-        return await fbSend.sendReturnShipback(sender, public_url, access_token);
+        return fbSend.sendReturnShipback(sender, public_url, access_token);
     }
-    const { public_url, id } = await srbAPI.createShipback(order_number, token);
-    await query.session.update({ shipback_id: id }, { sender });
-    return await fbSend.sendReturnShipback(sender, public_url, access_token);
+    return await fbSend.sendReturnShipback(sender, shipbacks.public_url, access_token);
+    
+    // const { public_url } = await srbAPI.createShipback(order_number, token);
+    // // await query.session.update({ shipback_id: id }, { sender });
+    // return await fbSend.sendReturnShipback(sender, public_url, access_token);
 }
 
 module.exports = {
