@@ -7,7 +7,7 @@ const httpPost = async (endpoint, payload, token = null) => {
         headers = Object.assign(headers, {'Authorization': `Token token=${token}`});
     }
     const url = `${DASHBOARD_URL}/${endpoint}`;
-    return await httpRequest(url[type], 'POST', payload, headers); 
+    return await httpRequest(url, 'POST', payload, headers); 
 }
 
 const httpGET = async (endpoint, token = null) => { 
@@ -16,7 +16,7 @@ const httpGET = async (endpoint, token = null) => {
         headers = Object.assign(headers, {'Authorization': `Token token=${token}`});
     }
     const url = `${DASHBOARD_URL}/${endpoint}`;
-    return await httpRequest(url[type], 'GET', {}, headers); 
+    return await httpRequest(url, 'GET', {}, headers); 
 }
 
 const fetchShipback = async (shipback_id, token = null) => {
