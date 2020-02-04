@@ -16,7 +16,7 @@ const httpRequest = (url, method, json = {}, headers = {}, retries = 5) => {
             if (response.statusCode === 200) {
                 resolve(body);
             } else {
-                console.log(response);
+                console.log(body);
                 httpRequest(url, method, headers, retries - 1);
             }
         });
