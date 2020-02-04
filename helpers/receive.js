@@ -61,11 +61,13 @@ const handleMessage = async (senderId, page_id, message, access_token) => {
 };
 
 const handleReturnMessage = async (sender, store_name, message, access_token) => {
-    const { token } = await query.store.fetchStore(store_name);
-    if(!token) throw new TypeError("Unauthorize");
-    throw new TypeError(token);
-    const order = await srbAPI.fetchOrder(message, token);
-    return await fbSend.sendMessage(sender, { text: JSON.stringify(order) }, access_token);
+    try {
+        const { token } = await query.store.fetchStore(store_name);
+        if(!token) throw new TypeError("Unauthorize");
+        const order = await srbAPI.fetchOrder(message, token);
+    } catch (error) {
+        return await fbSend.sendMessage(sender, { text: error.toString() }, access_token);
+    }
 };
 
 module.exports = {
