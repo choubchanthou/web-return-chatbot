@@ -64,9 +64,9 @@ const handleMessage = async (senderId, message, access_token) => {
     if (store_name) return await handleReturnMessage(senderId, store_name, message, access_token);
     // if (!stores) return await fbSend.sendUnavailableStore(senderId, access_token);
     // return await fbSend.sendStoreList(senderId, stores, access_token);
-    await query.session.delete({ sender });
-    await query.session.insert({ sender, store_name });
-    return await fbSend.sendPleaseEnterOrder(sender, access_token);
+    await query.session.delete({ senderId });
+    await query.session.insert({ senderId, store_name });
+    return await fbSend.sendPleaseEnterOrder(senderId, access_token);
 };
 
 const handleReturnMessage = async (sender, store_name, message, access_token) => {
