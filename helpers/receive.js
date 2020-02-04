@@ -8,8 +8,8 @@ const handleReceiveMessage = async (event, page_id) => {
         const message = event.message;
         const senderId = event.sender.id;
         await fbSend.sendReadReceipt(senderId, access_token);
-        if(message.text) {
-            await handleMessage(senderId, page_id, message.text, access_token);   
+        if (message.text) {
+            await handleMessage(senderId, page_id, message.text, access_token);
         }
     } catch (error) {
         console.log(error);
@@ -29,20 +29,20 @@ const handlePostbackGetStarted = async (sender, page_id, access_token) => {
     await query.session.delete({ sender });
     const stores = await query.store.hasStore(page_id);
     await fbSend.sendMessage(
-        sender, 
+        sender,
         [
             { text: 'Welcome to shoprunback return system.' },
             { text: 'Please choose the store below:' }
-        ], 
+        ],
         access_token
     );
     if (!stores) return await fbSend.sendUnavailableStore(sender, access_token);
     return await fbSend.sendStoreList(sender, stores, access_token);
 }
 
-const handlePostbackSelectStore = async (sender, store_name , access_token) => {
+const handlePostbackSelectStore = async (sender, store_name, access_token) => {
     await query.session.delete({ sender });
-    await query.session.insert({ sender , store_name });
+    await query.session.insert({ sender, store_name });
     return await fbSend.sendPleaseEnterOrder(sender, access_token);
 }
 
@@ -61,16 +61,21 @@ const handleMessage = async (senderId, page_id, message, access_token) => {
 };
 
 const handleReturnMessage = async (sender, store_name, message, access_token) => {
-    try {
-        const { token } = await query.store.fetchStore(store_name);
-        if(!token) throw new TypeError("Unauthorize");
-        const order = await srbAPI.fetchOrder(message, token);
-        console.log(order);
-        return await fbSend.sendMessage(sender, { text: JSON.stringify(order) }, access_token);
-    } catch (error) {
-        return await fbSend.sendMessage(sender, { text: error.toString() }, access_token);
-    }
+    const { token } = await query.store.fetchStore(store_name);
+    if (!token) throw new TypeError("Unauthorize");
+    const { shipback_id , order_number } = await srbAPI.fetchOrder(message, token);
+    if (order_number == undefined) return await fbSend.sendTryEnterOrder(sender, access_token);
+    return await handleMessageOrder(sender, shipback_id, order_number, access_token, token);
 };
+
+const handleMessageOrder = async (sender, shipback_id, order_number, access_token, token) => {
+     if(shipback_id != undefined) {
+        const { public_url } = await srbAPI.fetchShipback(shipback_id, token);
+        return await fbSend.sendReturnShipback(sender, public_url, access_token);
+    }
+    const { public_url } = await srbAPI.createShipback(order_number, token);
+    return await fbSend.sendReturnShipback(sender, public_url, access_token);
+}
 
 module.exports = {
     handleReceiveMessage,

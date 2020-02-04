@@ -66,6 +66,14 @@ const sendUnavailableStore = async (recipientId, access_token) => {
     );
 };
 
+const sendTryEnterOrder = async (recipientId, access_token) => {
+    return await sendMessage(
+        recipientId,
+        message.notFoundOrderText,
+        access_token
+    );
+};
+
 const sendStoreList = async (recipientId, stores, access_token) => {
     const messageArray = [];
     for(let store of stores) {
@@ -90,6 +98,14 @@ const sendPleaseEnterOrder = async (recipientId, access_token) => {
     );
 };
 
+const sendReturnShipback = async (recipientId, url, access_token) => {
+    return await sendMessage(
+        recipientId,
+        message.returnShipback(url),
+        access_token
+    );
+}
+
 module.exports = {
     sendMessage,
     sendReadReceipt,
@@ -97,5 +113,7 @@ module.exports = {
     sendDownloadLabelVoucher,
     sendStoreList,
     sendUnavailableStore,
-    sendPleaseEnterOrder
+    sendPleaseEnterOrder,
+    sendTryEnterOrder,
+    sendReturnShipback
 };

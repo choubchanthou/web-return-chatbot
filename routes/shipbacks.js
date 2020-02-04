@@ -2,6 +2,7 @@ const fbSend = require('../helpers/send');
 const express = require('express');
 const router = express.Router();
 const query = require('../helpers/query');
+const srbAPI = require('../helpers/srb.service');
 
 router.post('/shipbacks/finish', async (req, res) => {
     const { order_number, label_url, voucher_url, page_id } = req.body || {};
@@ -14,9 +15,13 @@ router.post('/shipbacks/finish', async (req, res) => {
 });
 
 router.get('/shipbacks/test', async (req, res) => {
-    const page_id = '102876274588508';
-    const data = await query.store.hasStore(page_id);
-    res.json(data);
+    // const page_id = '102876274588508';
+    // const data = await query.store.hasStore(page_id);
+    const orderId = '212124';
+    const token = 'HBAKqGDvojdVSZhsVsbE9jrYYoKSnC285-osaZAPMi-zpvsWEg';
+    const order = await srbAPI.fetchOrder(orderId, token);
+    console.log(order);
+    res.json(order);
 });
 
 module.exports = router;
