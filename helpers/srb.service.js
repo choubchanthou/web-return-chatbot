@@ -15,7 +15,6 @@ const httpGET = async (endpoint, token = null) => {
     if (token != null) {
         headers = Object.assign(headers, {'Authorization': `Token token=${token}`});
     }
-    console.log(headers);
     const url = `${DASHBOARD_URL}/${endpoint}`;
     return await httpRequest(url, 'GET', {}, headers); 
 }
