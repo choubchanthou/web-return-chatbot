@@ -58,6 +58,14 @@ const sendDownloadLabelVoucher = async (recipientId, urls ,access_token) => {
     )
 };
 
+const sendTracking = async (recipientId, url, access_token) => {
+    return await sendMessage(
+        recipientId,
+        message.showTracking(url),
+        access_token
+    )
+}
+
 const sendUnavailableStore = async (recipientId, access_token) => {
     return await sendMessage(
         recipientId,
@@ -115,5 +123,6 @@ module.exports = {
     sendUnavailableStore,
     sendPleaseEnterOrder,
     sendTryEnterOrder,
-    sendReturnShipback
+    sendReturnShipback,
+    sendTracking
 };

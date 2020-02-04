@@ -70,7 +70,11 @@ const handleReturnMessage = async (sender, store_name, message, access_token) =>
 
 const handleMessageOrder = async (sender, shipback_id, order_number, access_token, token) => {
      if(shipback_id != undefined) {
-        const { public_url } = await srbAPI.fetchShipback(shipback_id, token);
+        const { public_url, charged, label_url, voucher_url } = await srbAPI.fetchShipback(shipback_id, token);
+        if (charged) {
+            await fbSend.sendTracking(sender, public_url, access_token);
+            await fbSend.sendDownloadLabelVoucher(sender, { label_url, voucher_url }, access_token);
+        }
         return await fbSend.sendReturnShipback(sender, public_url, access_token);
     }
     const { public_url } = await srbAPI.createShipback(order_number, token);
