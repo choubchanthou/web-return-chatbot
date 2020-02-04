@@ -27,7 +27,7 @@ const handlePostbackGetStarted = async (sender, page_id, access_token) => {
     await query.session.delete({ sender });
     const stores = await query.store.hasStore(page_id);
     await fbSend.sendMessage(
-        senderId, 
+        sender, 
         [
             { text: 'Welcome to shoprunback return system.' },
             { text: 'Please choose the store below:' }
