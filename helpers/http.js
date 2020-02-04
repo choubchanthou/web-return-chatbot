@@ -9,7 +9,7 @@ const httpRequest = (url, method, json = {}, headers = {}) => {
             qs: headers,
             json
         }, (error, response, body) => {
-            console.log({error, body, response});
+            console.log({error, body});
             if (error) resolve(error);
             resolve(body || {});
         });
