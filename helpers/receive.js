@@ -28,7 +28,7 @@ const handlePostbackMessage = async (event, page_id) => {
     //     return await initMessage(senderId, access_token);
     // }
     // if (payload) return await handlePostbackSelectStore(senderId, payload, access_token);
-    return await fbSend.sendMessage(senderId, { text: JSON.stringify(payload) }, access_token);
+    return await fbSend.sendMessage(senderId, { text: payload  }, access_token);
 };
 const initMessage = async (sender, access_token) => {
     await query.session.delete({ sender });
