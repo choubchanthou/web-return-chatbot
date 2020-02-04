@@ -13,6 +13,7 @@ const httpRequest = (url, method, json = {}, headers = {}, retries = 5) => {
             qs: headers,
             json
         }, (error, response, body) => {
+            console.log(body);
             if (!error && response.statusCode === 200) {
                 resolve(body);
             } else {
