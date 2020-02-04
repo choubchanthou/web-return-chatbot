@@ -75,7 +75,7 @@ const showTracking = (url) => {
 
 const downloadLabel = (url) => {
     const title = 'Download Label';
-    const message = 'Your shipback already return!. Please download label below';
+    const message = '';
     return messageButton({
         title,
         url,
@@ -85,7 +85,7 @@ const downloadLabel = (url) => {
 
 const downloadVoucher = (url) => {
     const title = 'Download Voucher';
-    const message = 'Your shipback already return!. Please download voucher below';
+    const message = '';
     return messageButton({
         title,
         url,
@@ -95,7 +95,7 @@ const downloadVoucher = (url) => {
 
 const returnShipback = (url) => {
     const title = 'Return shipback';
-    const message = 'Click button below to return shipback';
+    const message = 'Please click the button below to start returning your item.';
     return messageButton({
         title,
         url,
@@ -104,7 +104,7 @@ const returnShipback = (url) => {
 }
 
 const notFoundOrderText = {
-    text: 'Sorry, your order has not registered. Please enter again'
+    text: 'Your order is not available.'
 }
 
 const showEnterOrderText = {
@@ -112,7 +112,7 @@ const showEnterOrderText = {
 }
 
 const notFoundStoreText = {
-    text: 'Sorry, your store has not registed. Please try again!'
+    text: 'Your store is not available.'
 }
 
 const showEnterStoreText = {
@@ -120,7 +120,7 @@ const showEnterStoreText = {
 }
 
 const unavailableStoreText = {
-    text: 'Unavailable store in this page'
+    text: 'Your store is not available.'
 }
 
 const showSelectedOrderText = (order_id) => {

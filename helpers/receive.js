@@ -9,13 +9,11 @@ const handleReceiveMessage = async (event, page_id) => {
         const senderId = event.sender.id;
         await fbSend.sendReadReceipt(senderId, access_token);
         const messageHello = ['hi','Hi', 'Hello', 'hello'];
-        if(messageHello.includes(message.text)) return await handlePostbackGetStarted(
-            senderId,
-            page_id,
-            access_token
-        );
+        if(messageHello.includes(message.text)) return await initMessage(senderId, access_token);
         if (message.text) {
-            return await handleMessage(senderId, page_id, message.text, access_token);
+            if(message.text == 'new') return await fbSend.sendMessage(senderId, { text: 'Please enter your store name:'}, access_token);
+            if (message.text == 'new2') return await handlePostbackGetStarted(senderId, page_id, access_token);
+            return await handleMessage(senderId, message.text, access_token);
         }
     } catch (error) {
         console.log(error);
@@ -26,23 +24,25 @@ const handlePostbackMessage = async (event, page_id) => {
     const { access_token } = await query.user.fetchUser(page_id);
     const { payload } = event.postback;
     const senderId = event.sender.id;
-    if (payload == '<postback_payload>') return await handlePostbackGetStarted(senderId, page_id, access_token);
+    if (payload == '<postback_payload>') return await initMessage(senderId, access_token);
     if (payload) return await handlePostbackSelectStore(senderId, payload, access_token);
     return await fbSend.sendMessage(senderId, { text: JSON.stringify(payload) }, access_token);
 };
-
-const handlePostbackGetStarted = async (sender, page_id, access_token) => {
+const initMessage = async (sender, access_token) => {
     await query.session.delete({ sender });
-    const stores = await query.store.hasStore(page_id);
-    await fbSend.sendMessage(
+    return await fbSend.sendMessage(
         sender,
         [
-            { text: 'Welcome to shoprunback return system.' },
-            { text: 'Please choose the store below:' }
+            { text: 'Welcome to ShopRunBack!' },
+            { text: 'Please type \'new\' or \'new2\' to start the process' }
         ],
         access_token
     );
+}
+const handlePostbackGetStarted = async (sender, page_id, access_token) => {
+    const stores = await query.store.hasStore(page_id);
     if (!stores) return await fbSend.sendUnavailableStore(sender, access_token);
+    await fbSend.sendMessage(sender, { text: 'Please select your store' }, access_token);
     return await fbSend.sendStoreList(sender, stores, access_token);
 }
 
@@ -58,12 +58,15 @@ const handleReferralMessage = async (event, page_id) => {
     const senderId = event.sender.id;
 };
 
-const handleMessage = async (senderId, page_id, message, access_token) => {
-    const stores = await query.store.hasStore(page_id);
+const handleMessage = async (senderId, message, access_token) => {
+    // const stores = await query.store.hasStore(page_id);
     const store_name = await query.session.hasSelectedStore(senderId);
     if (store_name) return await handleReturnMessage(senderId, store_name, message, access_token);
-    if (!stores) return await fbSend.sendUnavailableStore(senderId, access_token);
-    return await fbSend.sendStoreList(senderId, stores, access_token);
+    // if (!stores) return await fbSend.sendUnavailableStore(senderId, access_token);
+    // return await fbSend.sendStoreList(senderId, stores, access_token);
+    await query.session.delete({ sender });
+    await query.session.insert({ sender, store_name });
+    return await fbSend.sendPleaseEnterOrder(sender, access_token);
 };
 
 const handleReturnMessage = async (sender, store_name, message, access_token) => {
