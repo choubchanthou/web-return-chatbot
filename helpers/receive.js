@@ -63,7 +63,7 @@ const handleMessage = async (senderId, page_id, message, access_token) => {
 const handleReturnMessage = async (sender, store_name, message, access_token) => {
     const { token } = await query.store.fetchStore(store_name);
     if(!token) throw new TypeError("Unauthorize");
-    console.log(token);
+    throw new TypeError(token);
     const order = await srbAPI.fetchOrder(message, token);
     return await fbSend.sendMessage(sender, { text: JSON.stringify(order) }, access_token);
 };
