@@ -29,8 +29,14 @@ const handleReferralMessage = async (event, page_id) => {
 
 const handleMessage = async (senderId, page_id, message, access_token) => {
     const stores = await query.store.hasStore(page_id);
+    const store_name = await query.session.hasSelectedStore(senderId);
+    if (store_name) return await handleReturnMessage(senderId, message, access_token);
     if (!stores) return await fbSend.sendUnavailableStore(senderId, access_token);
     await fbSend.sendStoreList(senderId, stores, access_token);
+};
+
+const handleReturnMessage = async (senderId, message, access_token) => {
+    await fbSend.sendPleaseEnterOrder(senderId, access_token);
 };
 
 module.exports = {

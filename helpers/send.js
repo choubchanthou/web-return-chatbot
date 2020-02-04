@@ -82,6 +82,13 @@ const sendStoreList = async (recipientId, stores, access_token) => {
     );
 };
 
+const sendPleaseEnterOrder = async (recipientId, access_token) => {
+    return await sendMessage(
+        recipientId,
+        message.showEnterOrderText,
+        access_token
+    );
+};
 
 module.exports = {
     sendMessage,
@@ -89,5 +96,6 @@ module.exports = {
     sendTextEnterOrderId,
     sendDownloadLabelVoucher,
     sendStoreList,
-    sendUnavailableStore
+    sendUnavailableStore,
+    sendPleaseEnterOrder
 };

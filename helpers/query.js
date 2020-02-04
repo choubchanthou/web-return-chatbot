@@ -117,7 +117,6 @@ class Store extends Query {
 
     async hasStore(page_id) {
         const stores = await this.find({ page_id });
-        console.log(page_id);
         if(stores.length > 0) return stores;
         return false;
     }
@@ -126,6 +125,15 @@ class Store extends Query {
 class Session extends Query {
     constructor() {
         super('sessions');
+    }
+
+    async hasSelectedStore(sender) {
+        const session = await this.find({ sender });
+        if(session.length > 0) {
+            const { store_name } = session[0];
+            return store_name;
+        }
+        return false;
     }
 }
 
