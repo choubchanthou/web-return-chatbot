@@ -20,7 +20,8 @@ const handlePostbackMessage = async (event, page_id) => {
     const { payload } = event.postback;
     const senderId = event.sender.id;
     if (payload == '<postback_payload>') return await handlePostbackGetStarted(senderId, page_id, access_token);
-    await fbSend.sendMessage(senderId, { text: JSON.stringify(message) }, access_token);
+    if (payload) return await handlePostbackSelectStore(senderId, payload, access_token);
+    return await fbSend.sendMessage(senderId, { text: JSON.stringify(payload) }, access_token);
 };
 
 const handlePostbackGetStarted = async (sender, page_id, access_token) => {
@@ -36,6 +37,12 @@ const handlePostbackGetStarted = async (sender, page_id, access_token) => {
     );
     if (!stores) return await fbSend.sendUnavailableStore(sender, access_token);
     return await fbSend.sendStoreList(sender, stores, access_token);
+}
+
+const handlePostbackSelectStore = async (sender, store_name , access_token) => {
+    await query.session.delete({ sender });
+    await query.session.insert({ sender , store_name });
+    return await fbSend.sendPleaseEnterOrder(sender, access_token);
 }
 
 const handleReferralMessage = async (event, page_id) => {

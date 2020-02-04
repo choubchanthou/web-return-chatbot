@@ -92,7 +92,8 @@ class Query {
         });
     }
 
-    update(table, object = {}, conditions = {}) {
+    update(object = {}, conditions = {}) {
+        const table = this.table;
         const { condition, values } = this.toCondition(object);
         const con = this.toCondition(conditions, 'AND');
         const arr = values.concat(con.values);
