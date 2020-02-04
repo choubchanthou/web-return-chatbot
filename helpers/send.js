@@ -50,10 +50,7 @@ const sendTextEnterOrderId = async (recipientId, access_token) => {
 const sendDownloadLabelVoucher = async (recipientId, urls ,access_token) => {
     return await sendMessage(
         recipientId,
-        [
-            message.downloadLabel(urls.label_url),
-            message.downloadVoucher(urls.voucher_url)
-        ],
+        message.downloadLabel(urls.label_url),
         access_token
     )
 };

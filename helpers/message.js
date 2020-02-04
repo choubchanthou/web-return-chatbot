@@ -5,14 +5,14 @@ const toPublicURL = (url) => {
     return url.replace(srb_web_url, WEB_URL);
 }
 
-const setPreferencesButton = (options) => {
+const setPreferencesButton = (options, ext = true) => {
     const { title, url } = options || {};
     return {
         type: 'web_url',
         title,
         url: toPublicURL(url),
         webview_height_ratio: 'tall',
-        messenger_extensions: true,
+        messenger_extensions: ext,
     };
 }
 
@@ -35,7 +35,7 @@ const getStarted = {
     }
 };
 
-const messageButton = (options) => {
+const messageButton = (options, ext = true) => {
     const { url, message, title } = options || {};
     return {
         attachment: {
@@ -44,7 +44,7 @@ const messageButton = (options) => {
                 template_type: "button",
                 text: message,
                 buttons: [
-                    setPreferencesButton({ url, title })
+                    setPreferencesButton({ url, title}, ext)
                 ]
             }
         }
@@ -80,7 +80,7 @@ const downloadLabel = (url) => {
         title,
         url,
         message
-    });
+    }, false );
 }
 
 const downloadVoucher = (url) => {
@@ -90,7 +90,7 @@ const downloadVoucher = (url) => {
         title,
         url,
         message
-    });
+    }, false);
 }
 
 const returnShipback = (url) => {
