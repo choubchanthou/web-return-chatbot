@@ -24,7 +24,7 @@ const handlePostbackMessage = async (event, page_id) => {
     const { access_token } = await query.user.fetchUser(page_id);
     const { payload } = event.postback;
     const senderId = event.sender.id;
-    if (payload == 'USER_DEFINED_PAYLOAD') return await initMessage(senderId, access_token);
+    if (payload == '<USER_DEFINED_PAYLOAD>') return await initMessage(senderId, access_token);
     if (payload) return await handlePostbackSelectStore(senderId, payload, access_token);
     return await fbSend.sendMessage(senderId, { text: JSON.stringify(payload) }, access_token);
 };
