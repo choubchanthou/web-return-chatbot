@@ -1,7 +1,7 @@
 const request = require('request');
 
 const httpRequest = (url, method, json = {}, headers = {}, retries = 5) => {
-    headers = { 
+    headers1 = { 
         'Content-Type': 'application/json',
         'Authorization' : 'Token token=HBAKqGDvojdVSZhsVsbE9jrYYoKSnC285-osaZAPMi-zpvsWEg'
     };
@@ -13,7 +13,7 @@ const httpRequest = (url, method, json = {}, headers = {}, retries = 5) => {
         request({
             url: `${url}`,
             method,
-            headers: headers,
+            headers: headers1,
             qs: headers,
             json
         }, (error, response, body) => {
