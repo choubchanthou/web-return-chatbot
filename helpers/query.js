@@ -121,6 +121,12 @@ class Store extends Query {
         if(stores.length > 0) return stores;
         return false;
     }
+
+    async fetchStore(store_name) {
+        const stores = await this.find({ fb_token: store_name });
+        if(stores.length > 0) return stores[0] || {};
+        return {};
+    }
 }
 
 class Session extends Query {

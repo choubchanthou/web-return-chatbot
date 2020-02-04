@@ -1,5 +1,6 @@
 const fbSend = require('./send');
 const query = require('./query');
+const srbAPI = require('./srb.service');
 
 const handleReceiveMessage = async (event, page_id) => {
     try {
@@ -54,13 +55,16 @@ const handleReferralMessage = async (event, page_id) => {
 const handleMessage = async (senderId, page_id, message, access_token) => {
     const stores = await query.store.hasStore(page_id);
     const store_name = await query.session.hasSelectedStore(senderId);
-    if (store_name) return await handleReturnMessage(senderId, message, access_token);
+    if (store_name) return await handleReturnMessage(senderId, store_name, message, access_token);
     if (!stores) return await fbSend.sendUnavailableStore(senderId, access_token);
     return await fbSend.sendStoreList(senderId, stores, access_token);
 };
 
-const handleReturnMessage = async (senderId, message, access_token) => {
-    await fbSend.sendPleaseEnterOrder(senderId, access_token);
+const handleReturnMessage = async (sender, store_name, message, access_token) => {
+    const { token } = await query.store.fetchStore(store_name);
+    if(!token) throw new TypeError("Unauthorize");
+    const order = await srbAPI.fetchOrder(message, token);
+    return await fbSend.sendMessage(sender, { text: JSON.stringify(order) }, access_token);
 };
 
 module.exports = {

@@ -34,7 +34,7 @@ const createShipback = async (order_id, token = null) => {
     return await httpPost('shipbacks', payload, token);
 }
 
-export default {
+module.exports = {
     fetchShipback,
     fetchOrder,
     createShipback
