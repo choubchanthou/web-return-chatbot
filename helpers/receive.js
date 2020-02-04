@@ -17,10 +17,26 @@ const handleReceiveMessage = async (event, page_id) => {
 
 const handlePostbackMessage = async (event, page_id) => {
     const { access_token } = await query.user.fetchUser(page_id);
-    const message = event.postback;
+    const { payload } = event.postback;
     const senderId = event.sender.id;
+    if (payload == '<postback_payload>') return await handlePostbackGetStarted(senderId, page_id, access_token);
     await fbSend.sendMessage(senderId, { text: JSON.stringify(message) }, access_token);
 };
+
+const handlePostbackGetStarted = async (sender, page_id, access_token) => {
+    await query.session.delete({ sender });
+    const stores = await query.store.hasStore(page_id);
+    await fbSend.sendMessage(
+        senderId, 
+        [
+            { text: 'Welcome to shoprunback return system.' },
+            { text: 'Please choose the store below:' }
+        ], 
+        access_token
+    );
+    if (!stores) return await fbSend.sendUnavailableStore(senderId, access_token);
+    return await fbSend.sendStoreList(senderId, stores, access_token);
+}
 
 const handleReferralMessage = async (event, page_id) => {
     const { access_token } = await query.user.fetchUser(page_id);
@@ -33,7 +49,7 @@ const handleMessage = async (senderId, page_id, message, access_token) => {
     const store_name = await query.session.hasSelectedStore(senderId);
     if (store_name) return await handleReturnMessage(senderId, message, access_token);
     if (!stores) return await fbSend.sendUnavailableStore(senderId, access_token);
-    await fbSend.sendStoreList(senderId, stores, access_token);
+    return await fbSend.sendStoreList(senderId, stores, access_token);
 };
 
 const handleReturnMessage = async (senderId, message, access_token) => {
