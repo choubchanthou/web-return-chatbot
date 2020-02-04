@@ -34,8 +34,8 @@ const handlePostbackGetStarted = async (sender, page_id, access_token) => {
         ], 
         access_token
     );
-    if (!stores) return await fbSend.sendUnavailableStore(senderId, access_token);
-    return await fbSend.sendStoreList(senderId, stores, access_token);
+    if (!stores) return await fbSend.sendUnavailableStore(sender, access_token);
+    return await fbSend.sendStoreList(sender, stores, access_token);
 }
 
 const handleReferralMessage = async (event, page_id) => {
