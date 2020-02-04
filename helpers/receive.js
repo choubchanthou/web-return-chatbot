@@ -8,8 +8,14 @@ const handleReceiveMessage = async (event, page_id) => {
         const message = event.message;
         const senderId = event.sender.id;
         await fbSend.sendReadReceipt(senderId, access_token);
+        const messageHello = ['hi','Hi', 'Hello', 'hello'];
+        if(messageHello.includes(message.text)) return await handlePostbackGetStarted(
+            senderId,
+            page_id,
+            access_token
+        );
         if (message.text) {
-            await handleMessage(senderId, page_id, message.text, access_token);
+            return await handleMessage(senderId, page_id, message.text, access_token);
         }
     } catch (error) {
         console.log(error);
