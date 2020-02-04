@@ -14,7 +14,7 @@ const httpRequest = (url, method, json = {}, headers = {}, retries = 5) => {
         request({
             url: `${url}`,
             method,
-            headers: headers1,
+            headers,
             qs: headers,
             json
         }, (error, response, body) => {
