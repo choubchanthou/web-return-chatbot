@@ -24,8 +24,8 @@ const handlePostbackMessage = async (event, page_id) => {
     const { access_token } = await query.user.fetchUser(page_id);
     const { payload } = event.postback;
     const senderId = event.sender.id;
-    if (payload == '<USER_DEFINED_PAYLOAD>') return await initMessage(senderId, access_token);
-    if (payload) return await handlePostbackSelectStore(senderId, payload, access_token);
+    // if (payload == '<USER_DEFINED_PAYLOAD>') return await initMessage(senderId, access_token);
+    // if (payload) return await handlePostbackSelectStore(senderId, payload, access_token);
     return await fbSend.sendMessage(senderId, { text: JSON.stringify(payload) }, access_token);
 };
 const initMessage = async (sender, access_token) => {
@@ -65,6 +65,7 @@ const handleMessage = async (senderId, message, access_token) => {
     // if (!stores) return await fbSend.sendUnavailableStore(senderId, access_token);
     // return await fbSend.sendStoreList(senderId, stores, access_token);
     await query.session.delete({ senderId });
+    
     await query.session.insert({ senderId, store_name });
     return await fbSend.sendPleaseEnterOrder(senderId, access_token);
 };
