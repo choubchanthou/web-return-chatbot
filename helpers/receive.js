@@ -83,7 +83,7 @@ const handleMessage = async (senderId, page_id, message, access_token) => {
         }
     }
     if(name == '') return await fbSend.sendUnavailableStore(senderId, access_token);
-    await query.session.update({ store_name: name, step: 1 }, { sender });
+    await query.session.update({ store_name: name, step: 1 }, { sender: senderId });
     return await fbSend.sendPleaseEnterOrder(senderId, access_token);
 };
 
