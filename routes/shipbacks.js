@@ -7,7 +7,9 @@ const srbAPI = require('../helpers/srb.service');
 router.post('/shipbacks/finish', async (req, res) => {
     const { psid } = req.body || {};
     const { sender, page_id } = await query.session.fetchSession(psid);
+    console.log({ sender, page_id });
     const { access_token } = await query.user.find({ page_id });
+    console.log({ access_token });
     // await query.session.delete({ sender });
     // await fbSend.sendReadReceipt(sender, access_token);
     await fbSend.sendMessage(sender, { text: 'success' }, access_token);
