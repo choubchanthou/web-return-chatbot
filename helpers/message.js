@@ -11,7 +11,7 @@ const setPreferencesButton = (options, ext = true) => {
         type: 'web_url',
         title,
         url: toPublicURL(url),
-        webview_height_ratio: 'tall',
+        webview_height_ratio: 'full',
         messenger_extensions: ext,
     };
 }
