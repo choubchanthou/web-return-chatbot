@@ -8,8 +8,9 @@ router.post('/shipbacks/finish', async (req, res) => {
     const { psid } = req.body || {};
     const { sender, page_id } = await query.session.fetchSession(psid);
     const { access_token } = await query.user.fetchUser(page_id);
+    console.log(access_token);
     await query.session.delete({ sender });
-    await fbSend.sendReadReceipt(sender, access_token);
+    // await fbSend.sendReadReceipt(sender, access_token);
     await fbSend.sendMessage(sender, { text: 'Thank you for using our service!' }, access_token);
     // await fbSend.sendDownloadLabelVoucher(sender,{  label_url, voucher_url }, access_token);
     res.json(req.body);
