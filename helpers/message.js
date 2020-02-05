@@ -102,8 +102,8 @@ const showDownloadVoucherLabel = (object = {}) => {
                 template_type: "button",
                 text: "Please download below:",
                 buttons: [
-                    setPreferencesButton({ label_url, title: 'Download Label' }, false),
-                    setPreferencesButton({ voucher_url, title: 'Download Voucher' }, false)
+                    setPreferencesButton({ url: label_url, title: 'Download Label' }, false),
+                    setPreferencesButton({ url: voucher_url, title: 'Download Voucher' }, false)
                 ]
             }
         }
