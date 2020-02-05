@@ -22,7 +22,7 @@ const handleReceiveMessage = async (event, page_id) => {
                 await query.session.insert({ sender, option: 'new2', step: 0 });
                 return await handlePostbackGetStarted(senderId, page_id, access_token);
             } 
-            return await handleMessage(senderId, message.text, access_token);
+            return await handleMessage(senderId, page_id, message.text, access_token);
         }
     } catch (error) {
         console.log(error);
@@ -66,16 +66,24 @@ const handleReferralMessage = async (event, page_id) => {
     const senderId = event.sender.id;
 };
 
-const handleMessage = async (senderId, message, access_token) => {
-    // const stores = await query.store.hasStore(page_id);
+const handleMessage = async (senderId, page_id, message, access_token) => {
+    const stores = await query.store.hasStore(page_id);
     const store_name = await query.session.hasSelectedStore(senderId);
     if (store_name) return await handleReturnMessage(senderId, store_name, message, access_token);
-    // if (!stores) return await fbSend.sendUnavailableStore(senderId, access_token);
+    if (!stores) return await fbSend.sendUnavailableStore(senderId, access_token);
     // return await fbSend.sendStoreList(senderId, stores, access_token);
     // await query.session.delete({ senderId });
     
     // await query.session.insert({ senderId, store_name });
-    await query.session.update({ store_name, step: 1 }, { sender });
+    var name = '';
+    for(let store of stores) {
+        if(store.name.toLowerCase() == message.toLowerCase()){
+            name = store.fb_token;
+            break;
+        }
+    }
+    if(name == '') return await fbSend.sendUnavailableStore(senderId, access_token);
+    await query.session.update({ store_name: name, step: 1 }, { sender });
     return await fbSend.sendPleaseEnterOrder(senderId, access_token);
 };
 
