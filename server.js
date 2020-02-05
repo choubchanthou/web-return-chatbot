@@ -18,6 +18,11 @@ const shipbacks = require('./routes/shipbacks');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 app.get('/', (req, res) => res.send('Proxy version 1.0'));
 app.use('/webhook', webhooks);
 app.use('/', shipbacks);
