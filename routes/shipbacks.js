@@ -11,7 +11,7 @@ router.post('/shipbacks/finish', async (req, res) => {
     console.log(access_token);
     await query.session.delete({ sender });
     // await fbSend.sendReadReceipt(sender, access_token);
-    await fbSend.sendMessage(sender, { text: 'Thank you for using our service!' }, access_token);
+    // await fbSend.sendMessage(sender, { text: 'Thank you for using our service!' }, access_token);
     // await fbSend.sendDownloadLabelVoucher(sender,{  label_url, voucher_url }, access_token);
     res.json(req.body);
 });
