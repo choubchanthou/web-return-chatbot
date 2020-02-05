@@ -75,7 +75,7 @@ const showTracking = (url) => {
 
 const downloadLabel = (url) => {
     const title = 'Download Label';
-    const message = '';
+    const message = 'Click here';
     return messageButton({
         title,
         url,
@@ -85,7 +85,7 @@ const downloadLabel = (url) => {
 
 const downloadVoucher = (url) => {
     const title = 'Download Voucher';
-    const message = '';
+    const message = 'Click here';
     return messageButton({
         title,
         url,
