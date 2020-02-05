@@ -93,6 +93,23 @@ const downloadVoucher = (url) => {
     }, false);
 }
 
+const showDownloadVoucherLabel = (object = {}) => {
+    const { label_url, voucher_url } = object;
+    return {
+        attachment: {
+            type: "template",
+            payload: {
+                template_type: "button",
+                text: "Please download below:",
+                buttons: [
+                    setPreferencesButton({ label_url, title: 'Download Label' }, false),
+                    setPreferencesButton({ voucher_url, title: 'Download Voucher' }, false)
+                ]
+            }
+        }
+    }
+}
+
 const returnShipback = (url) => {
     const title = 'Return shipback';
     const message = 'Please click the button below to start returning your item.';
@@ -163,5 +180,6 @@ module.exports = {
     downloadVoucher,
     messageButtonPostback,
     setElement,
-    unavailableStoreText
+    unavailableStoreText,
+    showDownloadVoucherLabel
 }
