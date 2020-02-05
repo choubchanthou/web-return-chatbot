@@ -7,10 +7,10 @@ const handleReceiveMessage = async (event, page_id) => {
         const { access_token } = await query.user.fetchUser(page_id);
         const message = event.message;
         const senderId = event.sender.id;
-        await fbSend.sendReadReceipt(senderId, access_token);
-        const messageHello = ['hi','Hi', 'Hello', 'hello'];
-        if(messageHello.includes(message.text)) return await initMessage(senderId, access_token);
         if (message.text) {
+            await fbSend.sendReadReceipt(senderId, access_token);
+            const messageHello = ['hi','Hi', 'Hello', 'hello'];
+            if(messageHello.includes(message.text)) return await initMessage(senderId, access_token);
             const { option, step } = query.session.fetchSession(senderId) || {};
             if(message.text == 'new' || (option == 'new' && step == 0)) {
                 await query.session.delete({ sender: senderId });
