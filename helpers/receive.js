@@ -11,8 +11,17 @@ const handleReceiveMessage = async (event, page_id) => {
         const messageHello = ['hi','Hi', 'Hello', 'hello'];
         if(messageHello.includes(message.text)) return await initMessage(senderId, access_token);
         if (message.text) {
-            if(message.text == 'new') return await fbSend.sendMessage(senderId, { text: 'Please enter your store name:'}, access_token);
-            if (message.text == 'new2') return await handlePostbackGetStarted(senderId, page_id, access_token);
+            const { option, step } = query.session.fetchSession(senderId) || {};
+            if(message.text == 'new' || (option == 'new' && step == 0)) {
+                await query.session.delete({ sender: senderId });
+                await query.session.insert({ sender, option: 'new', step: 0 });
+                return await fbSend.sendMessage(senderId, { text: 'Please enter your store name:'}, access_token);
+            }
+            if (message.text == 'new2' || (option == 'new2' && step == 0)) {
+                await query.session.delete({ sender: senderId });
+                await query.session.insert({ sender, option: 'new2', step: 0 });
+                return await handlePostbackGetStarted(senderId, page_id, access_token);
+            } 
             return await handleMessage(senderId, message.text, access_token);
         }
     } catch (error) {
@@ -24,8 +33,8 @@ const handlePostbackMessage = async (event, page_id) => {
     const { access_token } = await query.user.fetchUser(page_id);
     const { payload } = event.postback;
     const senderId = event.sender.id;
-    // if (payload == '<USER_DEFINED_PAYLOAD>') return await initMessage(senderId, access_token);
-    // if (payload) return await handlePostbackSelectStore(senderId, payload, access_token);
+    if (payload == '<USER_DEFINED_PAYLOAD>') return await initMessage(senderId, access_token);
+    if (payload) return await handlePostbackSelectStore(senderId, payload, access_token);
     return await fbSend.sendMessage(senderId, { text: JSON.stringify(payload) }, access_token);
 };
 const initMessage = async (sender, access_token) => {
@@ -47,8 +56,7 @@ const handlePostbackGetStarted = async (sender, page_id, access_token) => {
 }
 
 const handlePostbackSelectStore = async (sender, store_name, access_token) => {
-    await query.session.delete({ sender });
-    await query.session.insert({ sender, store_name });
+    await query.session.update({ store_name, step: 1 }, { sender });
     return await fbSend.sendPleaseEnterOrder(sender, access_token);
 }
 
@@ -64,9 +72,10 @@ const handleMessage = async (senderId, message, access_token) => {
     if (store_name) return await handleReturnMessage(senderId, store_name, message, access_token);
     // if (!stores) return await fbSend.sendUnavailableStore(senderId, access_token);
     // return await fbSend.sendStoreList(senderId, stores, access_token);
-    await query.session.delete({ senderId });
+    // await query.session.delete({ senderId });
     
-    await query.session.insert({ senderId, store_name });
+    // await query.session.insert({ senderId, store_name });
+    await query.session.update({ store_name, step: 1 }, { sender });
     return await fbSend.sendPleaseEnterOrder(senderId, access_token);
 };
 
