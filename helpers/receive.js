@@ -9,7 +9,6 @@ const handleReceiveMessage = async (event, page_id) => {
         const senderId = event.sender.id;
         await fbSend.sendReadReceipt(senderId, access_token);
         const messageHello = ['hi','Hi', 'Hello', 'hello'];
-        return fbSend.sendMessage(senderId, { text: senderId }, access_token);
         if(messageHello.includes(message.text)) return await initMessage(senderId, access_token);
         if (message.text) {
             const { option, step } = query.session.fetchSession(senderId) || {};
