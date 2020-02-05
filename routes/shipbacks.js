@@ -5,15 +5,13 @@ const query = require('../helpers/query');
 const srbAPI = require('../helpers/srb.service');
 
 router.post('/shipbacks/finish', async (req, res) => {
-    const { psid } = req.body || {};
+    const { psid, label_url, voucher_url } = req.body || {};
     const { sender, page_id } = await query.session.fetchSession(psid);
-    console.log({ sender, page_id });
-    const { access_token } = await query.user.find({ page_id });
-    console.log({ access_token });
-    // await query.session.delete({ sender });
-    // await fbSend.sendReadReceipt(sender, access_token);
-    await fbSend.sendMessage(sender, { text: 'success' }, access_token);
-    // await fbSend.sendDownloadLabelVoucher(sender,{ label_url, voucher_url }, access_token);
+    const { access_token } = await query.user.fetchUser(page_id);
+    await query.session.delete({ sender });
+    await fbSend.sendReadReceipt(sender, access_token);
+    await fbSend.sendMessage(sender, { text: 'Thank you for using our service!' }, access_token);
+    await fbSend.sendDownloadLabelVoucher(sender,{  label_url, voucher_url }, access_token);
     res.json(req.body);
 });
 
