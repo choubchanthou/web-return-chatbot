@@ -14,12 +14,12 @@ const handleReceiveMessage = async (event, page_id) => {
             const { option, step } = query.session.fetchSession(senderId) || {};
             if(message.text == 'new' || (option == 'new' && step == 0)) {
                 await query.session.delete({ sender: senderId });
-                await query.session.insert({ sender, option: 'new', step: 0 });
+                await query.session.insert({ sender: senderId, option: 'new', step: 0 });
                 return await fbSend.sendMessage(senderId, { text: 'Please enter your store name:'}, access_token);
             }
             if (message.text == 'new2' || (option == 'new2' && step == 0)) {
                 await query.session.delete({ sender: senderId });
-                await query.session.insert({ sender, option: 'new2', step: 0 });
+                await query.session.insert({ sender: senderId, option: 'new2', step: 0 });
                 return await handlePostbackGetStarted(senderId, page_id, access_token);
             } 
             return await handleMessage(senderId, page_id, message.text, access_token);
