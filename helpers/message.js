@@ -2,7 +2,10 @@ const { WEB_URL } = require('../config');
 
 const toPublicURL = (url) => {
     const srb_web_url = 'https://staging.v2.shoprunback.com';
-    return url.replace(srb_web_url, WEB_URL);
+    const srb_web_url2 = 'http://staging.web.shoprunback.com';
+    let web_url = url.replace(srb_web_url, WEB_URL);
+    web_url = web_url.replace(srb_web_url2, WEB_URL);
+    return web_url;
 }
 
 const setPreferencesButton = (options, ext = true) => {
