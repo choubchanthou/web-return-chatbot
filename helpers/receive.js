@@ -12,12 +12,12 @@ const handleReceiveMessage = async (event, page_id) => {
             const messageHello = ['hi','Hi', 'Hello', 'hello'];
             if(messageHello.includes(message.text)) return await initMessage(senderId, access_token);
             const { option, step } = query.session.fetchSession(senderId) || {};
-            if(message.text.toLowerCase() == 'new' || (option.toLowerCase() == 'new' && step == 0)) {
+            if(message.text.toLowerCase() == 'new' || (option == 'new' && step == 0)) {
                 await query.session.delete({ sender: senderId });
                 await query.session.insert({ sender: senderId, option: 'new', step: 0, page_id });
                 return fbSend.sendMessage(senderId, { text: 'Please enter your store name:'}, access_token);
             }
-            if (message.text.toLowerCase() == 'new2' || (option.toLowerCase() == 'new2' && step == 0)) {
+            if (message.text.toLowerCase() == 'new2' || (option == 'new2' && step == 0)) {
                 await query.session.delete({ sender: senderId });
                 await query.session.insert({ sender: senderId, option: 'new2', step: 0, page_id });
                 return handlePostbackGetStarted(senderId, page_id, access_token);
