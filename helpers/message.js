@@ -179,18 +179,16 @@ const buttonTemplate = (label, buttons) => {
         }
     }
 };
-const buttonReturnItem = {
-    buttons: setButtons('RETURN ITEM', 'postback_return')
-};
 const buttonContactSupport = (web_url) => {
-    return {
-        buttons: [
-            { web_url, type: "web_url", title: 'CONTACT SUPPORT' }
-        ]
+    return { 
+        web_url, 
+        type: "web_url", 
+        title: 'CONTACT SUPPORT' 
     };
 };
 
 const messageWelcome = (contact_url) => {
+    const buttonReturnItem = setButtons('RETURN ITEM', 'postback_return');
     const buttons = [
         buttonReturnItem,
         buttonContactSupport(contact_url)
