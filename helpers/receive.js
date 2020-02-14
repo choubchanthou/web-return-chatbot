@@ -8,23 +8,9 @@ const handleReceiveMessage = async (event, page_id) => {
         const message = event.message;
         const senderId = event.sender.id;
         if (message.text) {
-            fbSend.sendMessageWelcome(senderId, contact, access_token);
-            return;
             await fbSend.sendReadReceipt(senderId, access_token);
-            const messageHello = ['hi', 'Hi', 'Hello', 'hello'];
-            if (messageHello.includes(message.text)) return await initMessage(senderId, access_token);
-            const { option, step } = query.session.fetchSession(senderId) || {};
-            if (message.text.toLowerCase() == 'new' || (option == 'new' && step == 0)) {
-                await query.session.delete({ sender: senderId });
-                await query.session.insert({ sender: senderId, option: 'new', step: 0, page_id });
-                return fbSend.sendMessage(senderId, { text: 'Please enter your store name:' }, access_token);
-            }
-            if (message.text.toLowerCase() == 'new2' || (option == 'new2' && step == 0)) {
-                await query.session.delete({ sender: senderId });
-                await query.session.insert({ sender: senderId, option: 'new2', step: 0, page_id });
-                return handlePostbackGetStarted(senderId, page_id, access_token);
-            }
-            return await handleMessage(senderId, page_id, message.text, access_token);
+            // const { option, step } = query.session.fetchSession(senderId) || {};
+            return await initMessage(senderId, contact, access_token);
         }
     } catch (error) {
         console.log(error);
@@ -39,16 +25,9 @@ const handlePostbackMessage = async (event, page_id) => {
     if (payload) return await handlePostbackSelectStore(senderId, payload, access_token);
     return await fbSend.sendMessage(senderId, { text: JSON.stringify(payload) }, access_token);
 };
-const initMessage = async (sender, access_token) => {
+const initMessage = async (sender, contact, access_token) => {
     await query.session.delete({ sender });
-    return await fbSend.sendMessage(
-        sender,
-        [
-            { text: 'Welcome to ShopRunBack!' },
-            { text: 'Please type \'new\' or \'new2\' to start the process' }
-        ],
-        access_token
-    );
+    return fbSend.sendMessageWelcome(senderId, contact, access_token);
 }
 const handlePostbackGetStarted = async (sender, page_id, access_token) => {
     const stores = await query.store.hasStore(page_id);
