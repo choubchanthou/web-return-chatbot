@@ -181,7 +181,7 @@ const buttonTemplate = (label, buttons) => {
 };
 const buttonContactSupport = (web_url) => {
     return { 
-        web_url, 
+        url: web_url, 
         type: "web_url", 
         title: 'CONTACT SUPPORT' 
     };
@@ -194,7 +194,7 @@ const buttonReturnItem = {
 
 const messageWelcome = (contact_url) => {
     const buttons = [
-        // buttonReturnItem,
+        buttonReturnItem,
         buttonContactSupport(contact_url)
     ];
     const welcomeText = { text: 'Welcome to ShopRunBack!' };
