@@ -47,7 +47,7 @@ const messageButton = (options, ext = true) => {
                 template_type: "button",
                 text: message,
                 buttons: [
-                    setPreferencesButton({ url, title}, ext)
+                    setPreferencesButton({ url, title }, ext)
                 ]
             }
         }
@@ -83,7 +83,7 @@ const downloadLabel = (url) => {
         title,
         url,
         message
-    }, false );
+    }, false);
 }
 
 const downloadVoucher = (url) => {
@@ -158,6 +158,7 @@ const setButtons = (title, payload) => {
         }
     ]
 }
+
 const setElement = (options = {}) => {
     const { title, image_url, payload } = options;
     return {
@@ -166,6 +167,40 @@ const setElement = (options = {}) => {
         buttons: setButtons(title, payload)
     }
 }
+const buttonTemplate = (label, buttons) => {
+    return {
+        attachment: {
+            type: "template",
+            payload: {
+                template_type: "button",
+                text: label,
+                buttons: buttons
+            }
+        }
+    }
+};
+const buttonContactSupport = (web_url) => {
+    return { 
+        url: web_url, 
+        type: "web_url", 
+        title: 'CONTACT SUPPORT' 
+    };
+};
+const buttonReturnItem = {
+    type: "postback",
+    title: 'RETURN ITEM',
+    payload: 'postback_return'
+};
+
+const messageWelcome = (contact_url) => {
+    const buttons = [
+        buttonReturnItem,
+        buttonContactSupport(contact_url)
+    ];
+    const welcomeText = { text: 'Welcome to ShopRunBack!' };
+    const label = 'What can we help you?'
+    return [ welcomeText, buttonTemplate(label, buttons)];
+};
 
 module.exports = {
     getStarted,
@@ -184,5 +219,6 @@ module.exports = {
     messageButtonPostback,
     setElement,
     unavailableStoreText,
-    showDownloadVoucherLabel
+    showDownloadVoucherLabel,
+    messageWelcome
 }

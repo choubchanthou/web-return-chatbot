@@ -110,6 +110,13 @@ const sendReturnShipback = async (recipientId, url, access_token) => {
         access_token
     );
 }
+const sendMessageWelcome = async (recipientId, contact_url, access_token) => {
+    return await sendMessage(
+        recipientId,
+        message.messageWelcome(contact_url),
+        access_token
+    );
+};
 
 module.exports = {
     sendMessage,
@@ -121,5 +128,6 @@ module.exports = {
     sendPleaseEnterOrder,
     sendTryEnterOrder,
     sendReturnShipback,
-    sendTracking
+    sendTracking,
+    sendMessageWelcome
 };
