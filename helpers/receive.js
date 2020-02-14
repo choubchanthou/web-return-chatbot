@@ -6,15 +6,31 @@ const handleReceiveMessage = async (event, page_id) => {
     try {
         const { access_token, contact } = await query.user.fetchUser(page_id);
         const message = event.message;
-        const senderId = event.sender.id;
+        const sender = event.sender.id;
         if (message.text) {
-            await fbSend.sendReadReceipt(senderId, access_token);
-            // const { option, step } = query.session.fetchSession(senderId) || {};
-            return await initMessage(senderId, contact, access_token);
+            await fbSend.sendReadReceipt(sender, access_token);
+            const state = await handelState(sender, message.text, access_token);
+            if(state) return state;
+            return await initMessage(sender, contact, access_token);
         }
     } catch (error) {
         console.log(error);
     }
+};
+
+const resetState = async(sender, state = null) => {
+    if(state == null) return await query.session.delete({ sender });
+    return await query.session.update({ state }, { sender });
+};
+
+const state = async(sender) => {
+    const { state } = await query.session.fetchSession(sender) || {};
+    return state == undefined ? 'unknown' : state; 
+};
+
+const handelState = async(sender, message, access_token) => {
+    const _state = await state(sender);
+    if(_state == 'unknown') return false;
 };
 
 const handlePostbackMessage = async (event, page_id) => {
@@ -27,7 +43,7 @@ const handlePostbackMessage = async (event, page_id) => {
 };
 const initMessage = async (sender, contact, access_token) => {
     await query.session.delete({ sender });
-    return fbSend.sendMessageWelcome(senderId, contact, access_token);
+    return fbSend.sendMessageWelcome(sender, contact, access_token);
 }
 const handlePostbackGetStarted = async (sender, page_id, access_token) => {
     const stores = await query.store.hasStore(page_id);
