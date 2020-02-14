@@ -47,7 +47,7 @@ const handlePostbackMessage = async (event, page_id) => {
     const { payload } = event.postback;
     const senderId = event.sender.id;
     if (payload == '<USER_DEFINED_PAYLOAD>') return await initMessage(senderId, access_token);
-    if (payload == 'postback_return') return await handlePostbackGetStarted(senderId, access_token);
+    if (payload == 'postback_return') return await handlePostbackGetStarted(senderId, page_id, access_token);
     if (payload) return await handlePostbackSelectStore(senderId, payload, access_token);
     return await fbSend.sendMessage(senderId, { text: JSON.stringify(payload) }, access_token);
 };
@@ -56,7 +56,8 @@ const initMessage = async (sender, contact, access_token) => {
     await query.session.delete({ sender });
     return fbSend.sendMessageWelcome(sender, contact, access_token);
 }
-const handlePostbackGetStarted = async (sender, access_token) => {
+const handlePostbackGetStarted = async (sender, page_id, access_token) => {
+    const stores = await query.store.find({ page_id });
     await fbSend.sendMessageSelectMerchant(sender, access_token);
     return await fbSend.sendStoreList(sender, stores, access_token);
 }
