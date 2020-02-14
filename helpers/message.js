@@ -39,13 +39,12 @@ const getStarted = {
 };
 
 const messageButton = (options, ext = true) => {
-    const { url, message, title } = options || {};
+    const { url, title } = options || {};
     return {
         attachment: {
             type: "template",
             payload: {
                 template_type: "button",
-                text: message,
                 buttons: [
                     setPreferencesButton({ url, title}, ext)
                 ]
@@ -66,13 +65,11 @@ const messageButtonPostback = (elements) => {
     }
 }
 
-const showTracking = (url) => {
-    const title = 'Tracking';
-    const message = 'Click below to tracking your shipback';
+const showTracking = (url, order_id) => {
+    const title = `Track Shipping(${order_id})`;
     return messageButton({
         title,
-        url,
-        message
+        url
     });
 }
 
@@ -103,7 +100,6 @@ const showDownloadVoucherLabel = (object = {}) => {
             type: "template",
             payload: {
                 template_type: "button",
-                text: "Please download below:",
                 buttons: [
                     setPreferencesButton({ url: label_url, title: 'Download Label' }, false),
                     setPreferencesButton({ url: voucher_url, title: 'Download Voucher' }, false)
@@ -113,13 +109,11 @@ const showDownloadVoucherLabel = (object = {}) => {
     }
 }
 
-const returnShipback = (url) => {
-    const title = 'Return shipback';
-    const message = 'Please click the button below to start returning your item.';
+const returnShipback = (url, order_id) => {
+    const title = `Return order(${order_id})`;
     return messageButton({
         title,
-        url,
-        message
+        url
     });
 }
 
@@ -128,15 +122,15 @@ const notFoundOrderText = {
 }
 
 const showEnterOrderText = {
-    text: 'Please enter your order number:'
+    text: 'Please input your order number:'
 }
 
 const notFoundStoreText = {
     text: 'Your store is not available.'
 }
 
-const showEnterStoreText = {
-    text: 'Please enter your store name:'
+const messageSelectMerchant = {
+    text: 'Please select merchant'
 }
 
 const unavailableStoreText = {
@@ -177,7 +171,7 @@ module.exports = {
     notFoundOrderText,
     showEnterOrderText,
     notFoundStoreText,
-    showEnterStoreText,
+    messageSelectMerchant,
     showSelectedOrderText,
     persistentMenu,
     downloadVoucher,
