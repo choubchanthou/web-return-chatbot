@@ -195,7 +195,7 @@ const buttonReturnItem = {
 const messageWelcome = (contact_url) => {
     const buttons = [
         buttonReturnItem,
-        buttonContactSupport(contact_url)
+        // buttonContactSupport(contact_url)
     ];
     const welcomeText = { text: 'Welcome to ShopRunBack!' };
     const label = 'What can we help you?'
