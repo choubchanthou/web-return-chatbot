@@ -4,10 +4,12 @@ const srbAPI = require('./srb.service');
 
 const handleReceiveMessage = async (event, page_id) => {
     try {
-        const { access_token } = await query.user.fetchUser(page_id);
+        const { access_token, contact } = await query.user.fetchUser(page_id);
         const message = event.message;
         const senderId = event.sender.id;
         if (message.text) {
+            fbSend.sendMessageWelcome(senderId, contact, access_token);
+            return;
             await fbSend.sendReadReceipt(senderId, access_token);
             const messageHello = ['hi', 'Hi', 'Hello', 'hello'];
             if (messageHello.includes(message.text)) return await initMessage(senderId, access_token);
