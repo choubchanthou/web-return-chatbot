@@ -186,16 +186,20 @@ const buttonContactSupport = (web_url) => {
         title: 'CONTACT SUPPORT' 
     };
 };
+const buttonReturnItem = {
+    type: "postback",
+    title: 'RETURN ITEM',
+    payload: 'postback_return'
+};
 
 const messageWelcome = (contact_url) => {
-    const buttonReturnItem = setButtons('RETURN ITEM', 'postback_return');
     const buttons = [
         buttonReturnItem,
         buttonContactSupport(contact_url)
     ];
     const welcomeText = { text: 'Welcome to ShopRunBack!' };
     const label = 'What can we help you?'
-    return [ buttonTemplate(label, buttons), welcomeText ];
+    return [ welcomeText, buttonTemplate(label, buttons)];
 };
 
 module.exports = {
