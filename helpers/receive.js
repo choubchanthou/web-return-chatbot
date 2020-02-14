@@ -27,6 +27,15 @@ const state = async(sender) => {
     const { state } = await query.session.fetchSession(sender) || {};
     return state == undefined ? 'unknown' : state; 
 };
+const setState = async(sender, stateText, more = {}) => {
+    const _state = await state(stateText);
+    const params = Object.assign(more, { state: stateText,  sender: sender });
+    if(_state == 'unknown') {
+        await query.session.delete({ sender });
+        return await query.session.insert(params);
+    }
+    return await query.session.update(params, { sender });
+};
 
 const handelState = async(sender, message, access_token) => {
     const _state = await state(sender);
@@ -38,9 +47,10 @@ const handlePostbackMessage = async (event, page_id) => {
     const { payload } = event.postback;
     const senderId = event.sender.id;
     if (payload == '<USER_DEFINED_PAYLOAD>') return await initMessage(senderId, access_token);
-    if (payload) return await handlePostbackSelectStore(senderId, payload, access_token);
+    if (payload == 'postback_return') return await handlePostbackSelectStore(senderId, payload, access_token);
     return await fbSend.sendMessage(senderId, { text: JSON.stringify(payload) }, access_token);
 };
+
 const initMessage = async (sender, contact, access_token) => {
     await query.session.delete({ sender });
     return fbSend.sendMessageWelcome(sender, contact, access_token);
