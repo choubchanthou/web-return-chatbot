@@ -58,13 +58,12 @@ const initMessage = async (sender, contact, access_token) => {
 }
 const handlePostbackGetStarted = async (sender, page_id, access_token) => {
     const stores = await query.store.find({ page_id });
-    console.log(stores);
     await fbSend.sendMessageSelectMerchant(sender, access_token);
     return await fbSend.sendStoreList(sender, stores, access_token);
 }
 
 const handlePostbackSelectStore = async (sender, store_name, access_token) => {
-    await query.session.update({ store_name, step: 1 }, { sender });
+    await setState(sender, 'merchant', { store_name });
     return await fbSend.sendPleaseEnterOrder(sender, access_token);
 }
 
