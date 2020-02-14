@@ -117,6 +117,13 @@ const sendMessageWelcome = async (recipientId, contact_url, access_token) => {
         access_token
     );
 };
+const sendMessageSelectMerchant = async (recipientId, access_token) => {
+    return await sendMessage(
+        recipientId,
+        message.messageSelectMerchant,
+        access_token
+    );
+}
 
 module.exports = {
     sendMessage,
@@ -129,5 +136,6 @@ module.exports = {
     sendTryEnterOrder,
     sendReturnShipback,
     sendTracking,
-    sendMessageWelcome
+    sendMessageWelcome,
+    sendMessageSelectMerchant
 };

@@ -57,7 +57,7 @@ const initMessage = async (sender, contact, access_token) => {
     return fbSend.sendMessageWelcome(sender, contact, access_token);
 }
 const handlePostbackGetStarted = async (sender, access_token) => {
-    await fbSend.sendMessage(sender, message.messageSelectMerchant, access_token);
+    await fbSend.sendMessageSelectMerchant(sender, access_token);
     return await fbSend.sendStoreList(sender, stores, access_token);
 }
 
