@@ -18,6 +18,27 @@ const handleReceiveMessage = async (event, page_id) => {
     }
 };
 
+const handlePostbackMessage = async (event, page_id) => {
+    const { access_token } = await query.user.fetchUser(page_id);
+    const { payload } = event.postback;
+    const senderId = event.sender.id;
+    if (payload == '<USER_DEFINED_PAYLOAD>') return await initMessage(senderId, access_token);
+    if (payload == 'postback_return') return await handlePostbackMerchant(senderId, page_id, access_token);
+    if (payload) return await handlePostbackSelectStore(senderId, payload, access_token);
+    return false;
+};
+
+const handleReferralMessage = async (event, page_id) => {
+    const { access_token } = await query.user.fetchUser(page_id);
+    const message = event.referral;
+    const senderId = event.sender.id;
+};
+
+const initMessage = async (sender, contact, access_token) => {
+    await query.session.delete({ sender });
+    return fbSend.sendMessageWelcome(sender, contact, access_token);
+}
+
 const resetState = async(sender, state = null) => {
     if(state == null) return await query.session.delete({ sender });
     return await query.session.update({ state }, { sender });
@@ -37,61 +58,29 @@ const setState = async(sender, stateText, more = {}) => {
     return await query.session.update(params, { sender });
 };
 
-const handelState = async(sender, message, access_token) => {
-    const _state = await state(sender);
-    if(_state == 'unknown') return false;
-};
-
-const handlePostbackMessage = async (event, page_id) => {
-    const { access_token } = await query.user.fetchUser(page_id);
-    const { payload } = event.postback;
-    const senderId = event.sender.id;
-    if (payload == '<USER_DEFINED_PAYLOAD>') return await initMessage(senderId, access_token);
-    if (payload == 'postback_return') return await handlePostbackGetStarted(senderId, page_id, access_token);
-    if (payload) return await handlePostbackSelectStore(senderId, payload, access_token);
-    return await fbSend.sendMessage(senderId, { text: JSON.stringify(payload) }, access_token);
-};
-
-const initMessage = async (sender, contact, access_token) => {
-    await query.session.delete({ sender });
-    return fbSend.sendMessageWelcome(sender, contact, access_token);
-}
-const handlePostbackGetStarted = async (sender, page_id, access_token) => {
+const handlePostbackMerchant = async (sender, page_id, access_token) => {
     const stores = await query.store.find({ page_id });
     await fbSend.sendMessageSelectMerchant(sender, access_token);
     return await fbSend.sendStoreList(sender, stores, access_token);
 }
 
 const handlePostbackSelectStore = async (sender, store_name, access_token) => {
-    await setState(sender, 'merchant', { store_name });
+    await setState(sender, 'start', { store_name });
     return await fbSend.sendPleaseEnterOrder(sender, access_token);
 }
 
-const handleReferralMessage = async (event, page_id) => {
-    const { access_token } = await query.user.fetchUser(page_id);
-    const message = event.referral;
-    const senderId = event.sender.id;
+const handelState = async(sender, message, access_token) => {
+    const _state = await state(sender);
+    if(_state == 'unknown') return false;
+    if(_state == 'start') return await requestButtonOrder(sender, message, access_token);
 };
 
-const handleMessage = async (senderId, page_id, message, access_token) => {
-    const stores = await query.store.hasStore(page_id);
-    const store_name = await query.session.hasSelectedStore(senderId);
-    if (store_name) return await handleReturnMessage(senderId, store_name, message, access_token);
-    if (!stores) return await fbSend.sendUnavailableStore(senderId, access_token);
-    // return await fbSend.sendStoreList(senderId, stores, access_token);
-    // await query.session.delete({ senderId });
-
-    // await query.session.insert({ senderId, store_name });
-    var name = '';
-    for (let store of stores) {
-        if (store.name.toLowerCase() == message.toLowerCase()) {
-            name = store.fb_token;
-            break;
-        }
-    }
-    if (name == '') return await fbSend.sendUnavailableStore(senderId, access_token);
-    await query.session.update({ store_name: name, step: 1 }, { sender: senderId });
-    return await fbSend.sendPleaseEnterOrder(senderId, access_token);
+const requestButtonOrder = async(sender, order_id, access_token) => {
+    const { store_name } = await query.session.fetchSession(sender);
+    const { token } = await query.store.fetchStore(store_name);
+    const { order_number } = await srbAPI.fetchOrder(order_id, token);
+    if (order_number == undefined) return await fbSend.sendTryEnterOrder(sender, access_token);
+    return await handleMessageOrder(sender, order_number, access_token, token);
 };
 
 const handleReturnMessage = async (sender, store_name, message, access_token) => {
@@ -112,7 +101,6 @@ const handleMessageOrder = async (sender, order_number, access_token, token) => 
         const shipback_id = shipbacks.id;
         if (shipback_id == undefined) {
             const messageRes = shipbacks.shipback.errors[0];
-            console.log(messageRes);
             let arrayMessage = messageRes.split('(');
             arrayMessage = arrayMessage[arrayMessage.length - 1];
             arrayMessage = arrayMessage.split(')');
