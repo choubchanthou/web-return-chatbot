@@ -49,7 +49,7 @@ const state = async(sender) => {
     return state == undefined ? 'unknown' : state; 
 };
 const setState = async(sender, stateText, more = {}) => {
-    const _state = await state(stateText);
+    const _state = await state(sender);
     const params = Object.assign(more, { state: stateText,  sender: sender });
     if(_state == 'unknown') {
         console.log('create state', params);
