@@ -23,7 +23,7 @@ const handlePostbackMessage = async (event, page_id) => {
     const { payload } = event.postback;
     const senderId = event.sender.id;
     if (payload == '<USER_DEFINED_PAYLOAD>'){
-        const persons = await fbSend.sendFetchPerson(sender, access_token);
+        const persons = await fbSend.sendFetchPerson(senderId, access_token);
         await fbSend.sendOnlyMessageWelcome(senderId, persons, access_token);
         return await initMessage(senderId, contact, page_id, access_token);
     } 
