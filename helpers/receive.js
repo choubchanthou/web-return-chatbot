@@ -8,9 +8,8 @@ const handleReceiveMessage = async (event, page_id) => {
         const message = event.message;
         const sender = event.sender.id;
         if (message.text) {
-            const persons = fbSend.sendFetchPerson(sender, access_token).then(res => {
-                console.log(res);
-            })
+            const persons = await fbSend.sendFetchPerson(sender, access_token);
+            console.log(persons);
             await fbSend.sendReadReceipt(sender, access_token);
             const state = await handelState(sender, message.text, access_token);
             if (state != false) return state;
