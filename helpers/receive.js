@@ -92,7 +92,7 @@ const requestButtonOrder = async(sender, order_id, access_token) => {
 };
 
 const unavailableProcess = async(sender, access_token) => {
-    return await fbSend.sendTryEnterOrder(sender, access_token);
+    return await fbSend.sendMessageUnavailableOrderNumber(sender, access_token);
 };
 
 const handleReturnMessage = async (sender, store_name, message, access_token) => {

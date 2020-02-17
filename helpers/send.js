@@ -71,10 +71,10 @@ const sendUnavailableStore = async (recipientId, access_token) => {
     );
 };
 
-const sendTryEnterOrder = async (recipientId, access_token) => {
+const sendMessageUnavailableOrderNumber = async (recipientId, access_token) => {
     return await sendMessage(
         recipientId,
-        [ message.notFoundOrderText, message.messageRestartProccess],
+        message.messageUnavailableOrderNumber,
         access_token
     );
 };

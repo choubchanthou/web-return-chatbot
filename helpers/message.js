@@ -207,6 +207,13 @@ const messageRestartProccess = () => {
     return buttonTemplate(label, buttons);
 }
 
+const messageUnavailableOrderNumber = () => {
+    return [
+        notFoundOrderText,
+        messageRestartProccess
+    ];
+}
+
 module.exports = {
     getStarted,
     setPreferencesButton,
@@ -226,5 +233,5 @@ module.exports = {
     unavailableStoreText,
     showDownloadVoucherLabel,
     messageWelcome,
-    messageRestartProccess
+    messageUnavailableOrderNumber
 }
