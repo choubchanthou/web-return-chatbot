@@ -68,20 +68,19 @@ const handlePostbackMerchant = async (sender, page_id, access_token) => {
 }
 
 const handlePostbackSelectStore = async (sender, store_name, access_token) => {
-    await setState(sender, 'start', { store_name });
+    await setState(sender, 'process', { store_name });
     return await fbSend.sendPleaseEnterOrder(sender, access_token);
 }
 
 const handelState = async(sender, message, access_token) => {
     /* state list:
     1. unknown
-    2. start
-    3. proccess
+    2. process
     */
     const _state = await state(sender);
     console.log("fetch state", _state);
-    if(_state == 'unknown') return false;
-    if(_state == 'start') return await requestButtonOrder(sender, message, access_token);
+    if(_state == 'process') return await requestButtonOrder(sender, message, access_token);
+    return false;
 };
 
 const requestButtonOrder = async(sender, order_id, access_token) => {
