@@ -55,10 +55,10 @@ const sendDownloadLabelVoucher = async (recipientId, object ,access_token) => {
     )
 };
 
-const sendTracking = async (recipientId, url, access_token) => {
+const sendTracking = async (recipientId, props, access_token) => {
     return await sendMessage(
         recipientId,
-        message.showTracking(url),
+        message.showTracking(props),
         access_token
     )
 }

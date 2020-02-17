@@ -65,11 +65,12 @@ const messageButtonPostback = (elements) => {
     }
 }
 
-const showTracking = (url, order_id) => {
-    const title = `Track Shipping(${order_id})`;
+const showTracking = (props = {}) => {
+    const { public_url, order_number } = props;
+    const title = `Track Shipping(${order_number})`;
     return messageButton({
         title,
-        url
+        url: public_url
     });
 }
 
