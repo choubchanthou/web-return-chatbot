@@ -132,7 +132,6 @@ module.exports = {
     sendStoreList,
     sendUnavailableStore,
     sendPleaseEnterOrder,
-    sendTryEnterOrder,
     sendReturnShipback,
     sendTracking,
     sendMessageWelcome,
