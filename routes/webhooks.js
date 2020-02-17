@@ -18,6 +18,7 @@ router.post('/', (req, res) => {
             pageEntry.messaging.forEach((messagingEvent) => {
                 if (messagingEvent.message) {
                     fbReceive.handleReceiveMessage(messagingEvent, pageEntry.id);
+                    return;
                 } else if (messagingEvent.postback) {
                     fbReceive.handlePostbackMessage(messagingEvent, pageEntry.id);
                 } else if (messagingEvent.referral) {
