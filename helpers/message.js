@@ -114,6 +114,10 @@ const returnShipback = (props = {}) => {
     console.log('props return shipback on message', props);
     const { public_url, order_number } = props;
     const title = `Return order(${order_number})`;
+    console.log('Message order', messageButton({
+        title,
+        url: public_url
+    }));
     return messageButton({
         title,
         url: public_url
