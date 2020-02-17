@@ -15,15 +15,21 @@ const callAPI = async (endpoint, messageDataArray, queryParams = {}) => {
 
 const callMessagesAPI = async (messageDataArray, access_token) => {
 	if(!access_token) throw new TypeError("Unauthorize");
-	return await callAPI('messages', messageDataArray, { access_token });
+	return await callAPI('me/messages', messageDataArray, { access_token });
 };
 
 const callMessengerProfileAPI = async (messageDataArray, access_token) => {
 	if(!access_token) throw new TypeError("Unauthorize");
-	return await callAPI('messenger_profile', messageDataArray, { access_token });
+	return await callAPI('me/messenger_profile', messageDataArray, { access_token });
+};
+
+const callGetPersonAPI = async (perID, access_token) => {
+	const url = `${FB_URL}/${perID}?fields=first_name,last_name,profile_pic`;
+	return await httpRequest(url, 'GET', {}, { access_token });
 };
 
 module.exports = {
 	callMessagesAPI,
 	callMessengerProfileAPI,
+	callGetPersonAPI
 };

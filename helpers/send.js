@@ -132,6 +132,10 @@ const sendOnlyMessageWelcome = async(recipientId, access_token) => {
         access_token
     );
 }
+
+const sendFetchPerson = async(recipientId, access_token) => {
+    return await fbAPI.callGetPersonAPI(recipientId, access_token);
+};
 module.exports = {
     sendMessage,
     sendReadReceipt,
@@ -145,5 +149,6 @@ module.exports = {
     sendMessageWelcome,
     sendMessageSelectMerchant,
     sendMessageUnavailableOrderNumber,
-    sendOnlyMessageWelcome
+    sendOnlyMessageWelcome,
+    sendFetchPerson
 };
