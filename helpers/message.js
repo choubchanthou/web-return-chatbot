@@ -183,7 +183,7 @@ const buttonTemplate = (label, buttons) => {
 const buttonContactSupport = (web_url) => {
     return {
         content_type: 'text',
-        url: web_url,
+        payload: 'postback_return',
         title: 'CONTACT SUPPORT'
     };
 };
