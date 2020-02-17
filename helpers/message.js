@@ -202,7 +202,7 @@ const messageWelcome = (contact_url) => {
 };
 
 const messageRestartProccess = () => {
-    const label = "Please click reset button to restart the process.";
+    const label = "Please click reset button to restart the process or input order number again.";
     const buttons = [{
         type: "postback",
         title: 'RESET',
