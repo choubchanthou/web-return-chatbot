@@ -182,16 +182,25 @@ const buttonTemplate = (label, buttons) => {
 };
 const buttonContactSupport = (web_url) => {
     return {
+        content_type: 'text',
         url: web_url,
         type: "web_url",
         title: 'CONTACT SUPPORT'
     };
 };
 const buttonReturnItem = {
+    content_type: 'text',
     type: "postback",
     title: 'RETURN ITEM',
     payload: 'postback_return'
 };
+
+const quickReply = (label, buttons) => {
+    return {
+        text: label,
+        quick_replies: buttons
+    }
+}
 
 const messageWelcome = (contact_url) => {
     const buttons = [
@@ -199,8 +208,9 @@ const messageWelcome = (contact_url) => {
         buttonContactSupport(contact_url)
     ];
     const label = 'What can we help you?'
-    return buttonTemplate(label, buttons);
+    return quickReply(label, buttons);
 };
+
 const onlyMessageWelcome = {
     text: 'Welcome to ShopRunBack'
 };
@@ -212,7 +222,7 @@ const messageRestartProccess = () => {
         title: 'RESET',
         payload: 'postback_reset'
     }];
-    console.log('message restart process',  buttonTemplate(label, buttons));
+    console.log('message restart process', buttonTemplate(label, buttons));
     return buttonTemplate(label, buttons);
 }
 
