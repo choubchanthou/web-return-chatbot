@@ -74,7 +74,7 @@ const sendUnavailableStore = async (recipientId, access_token) => {
 const sendTryEnterOrder = async (recipientId, access_token) => {
     return await sendMessage(
         recipientId,
-        message.notFoundOrderText,
+        [ message.notFoundOrderText, message.messageRestartProccess],
         access_token
     );
 };
@@ -123,8 +123,7 @@ const sendMessageSelectMerchant = async (recipientId, access_token) => {
         message.messageSelectMerchant,
         access_token
     );
-}
-
+};
 module.exports = {
     sendMessage,
     sendReadReceipt,

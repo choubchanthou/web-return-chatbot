@@ -174,10 +174,10 @@ const buttonTemplate = (label, buttons) => {
     }
 };
 const buttonContactSupport = (web_url) => {
-    return { 
-        url: web_url, 
-        type: "web_url", 
-        title: 'CONTACT SUPPORT' 
+    return {
+        url: web_url,
+        type: "web_url",
+        title: 'CONTACT SUPPORT'
     };
 };
 const buttonReturnItem = {
@@ -193,8 +193,18 @@ const messageWelcome = (contact_url) => {
     ];
     const welcomeText = { text: 'Welcome to ShopRunBack!' };
     const label = 'What can we help you?'
-    return [ welcomeText, buttonTemplate(label, buttons)];
+    return [welcomeText, buttonTemplate(label, buttons)];
 };
+
+const messageRestartProccess = () => {
+    const label = "Please click reset button to restart the process.";
+    const buttons = [{
+        type: "postback",
+        title: 'RESET',
+        payload: 'postback_reset'
+    }];
+    return buttonTemplate(label, buttons);
+}
 
 module.exports = {
     getStarted,
@@ -214,5 +224,6 @@ module.exports = {
     setElement,
     unavailableStoreText,
     showDownloadVoucherLabel,
-    messageWelcome
+    messageWelcome,
+    messageRestartProccess
 }

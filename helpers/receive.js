@@ -76,7 +76,6 @@ const handelState = async(sender, message, access_token) => {
     1. unknown
     2. start
     3. proccess
-    4. unavailable
     */
     const _state = await state(sender);
     console.log("fetch state", _state);
@@ -93,8 +92,6 @@ const requestButtonOrder = async(sender, order_id, access_token) => {
 };
 
 const unavailableProcess = async(sender, access_token) => {
-    console.log('Unavailable process', 'set state unavailable');
-    await setState(sender, 'unavailable');
     return await fbSend.sendTryEnterOrder(sender, access_token);
 };
 
