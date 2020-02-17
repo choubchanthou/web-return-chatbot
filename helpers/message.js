@@ -202,8 +202,10 @@ const messageWelcome = (contact_url) => {
     return buttonTemplate(label, buttons);
 };
 
-const onlyMessageWelcome = {
-    text: 'Welcome to ShopRunBack'
+const onlyMessageWelcome = (person) => {
+   return {
+        text: `Hi ${person.first_name}! Welcome to ShopRunBack`
+   }
 };
 
 const messageRestartProccess = () => {

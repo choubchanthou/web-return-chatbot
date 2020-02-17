@@ -8,8 +8,6 @@ const handleReceiveMessage = async (event, page_id) => {
         const message = event.message;
         const sender = event.sender.id;
         if (message.text) {
-            const persons = await fbSend.sendFetchPerson(sender, access_token);
-            console.log(persons);
             await fbSend.sendReadReceipt(sender, access_token);
             const state = await handelState(sender, message.text, access_token);
             if (state != false) return state;
@@ -25,7 +23,8 @@ const handlePostbackMessage = async (event, page_id) => {
     const { payload } = event.postback;
     const senderId = event.sender.id;
     if (payload == '<USER_DEFINED_PAYLOAD>'){
-        await fbSend.sendOnlyMessageWelcome(senderId, access_token);
+        const persons = await fbSend.sendFetchPerson(sender, access_token);
+        await fbSend.sendOnlyMessageWelcome(senderId, persons, access_token);
         return await initMessage(senderId, contact, page_id, access_token);
     } 
     if (payload == 'postback_return') return await handlePostbackMerchant(senderId, page_id, access_token);

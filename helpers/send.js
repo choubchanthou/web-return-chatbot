@@ -125,10 +125,10 @@ const sendMessageSelectMerchant = async (recipientId, access_token) => {
         access_token
     );
 };
-const sendOnlyMessageWelcome = async(recipientId, access_token) => {
+const sendOnlyMessageWelcome = async(recipientId, persons, access_token) => {
     return await sendMessage(
         recipientId,
-        message.onlyMessageWelcome,
+        message.onlyMessageWelcome(persons),
         access_token
     );
 }
