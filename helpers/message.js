@@ -95,7 +95,7 @@ const downloadVoucher = (url) => {
     }, false);
 }
 
-const showDownloadVoucherLabel = (object = {}) => {
+const messageOrderReturned = (object = {}) => {
     const { label_url, voucher_url, public_url, order_number } = object;
     return {
         attachment: {
@@ -106,7 +106,7 @@ const showDownloadVoucherLabel = (object = {}) => {
                 buttons: [
                     setPreferencesButton({ url: label_url, title: 'Download Label' }, false),
                     setPreferencesButton({ url: voucher_url, title: 'Download Voucher' }, false),
-                    setPreferencesButton({ url: public_url, title: `Track Shipping${order_number}` }, true)
+                    setPreferencesButton({ url: public_url, title: `Track Shipping(${order_number})` }, true)
                 ]
             }
         }
@@ -238,7 +238,7 @@ module.exports = {
     messageButtonPostback,
     setElement,
     unavailableStoreText,
-    showDownloadVoucherLabel,
+    messageOrderReturned,
     messageWelcome,
     messageUnavailableOrderNumber
 }

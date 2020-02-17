@@ -47,10 +47,10 @@ const sendTextEnterOrderId = async (recipientId, access_token) => {
     return await sendMessage(recipientId, message.showEnterOrderText, access_token);
 };
 
-const sendDownloadLabelVoucher = async (recipientId, object ,access_token) => {
+const sendMessageOrderReturned = async (recipientId, object ,access_token) => {
     return await sendMessage(
         recipientId,
-        message.showDownloadVoucherLabel(object),
+        message.messageOrderReturned(object),
         access_token
     )
 };
@@ -129,7 +129,7 @@ module.exports = {
     sendMessage,
     sendReadReceipt,
     sendTextEnterOrderId,
-    sendDownloadLabelVoucher,
+    sendMessageOrderReturned,
     sendStoreList,
     sendUnavailableStore,
     sendPleaseEnterOrder,

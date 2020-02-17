@@ -120,7 +120,7 @@ const handleMessageOrder = async (sender, order_number, access_token, token) => 
             const { public_url, charged, label_url, voucher_url } = await srbAPI.fetchShipback(arrayMessage[0], token);
             console.log('fetch shipback', { public_url, charged, label_url, voucher_url });
             if (charged) {
-                return await fbSend.sendDownloadLabelVoucher(
+                return await fbSend.sendMessageOrderReturned(
                     sender,
                     { label_url, voucher_url, public_url,  order_number},
                     access_token
