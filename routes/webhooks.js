@@ -17,12 +17,11 @@ router.post('/', (req, res) => {
         data.entry.forEach((pageEntry) => {
             pageEntry.messaging.forEach((messagingEvent) => {
                 if (messagingEvent.message) {
-                    fbReceive.handleReceiveMessage(messagingEvent, pageEntry.id);
-                    return;
+                    return fbReceive.handleReceiveMessage(messagingEvent, pageEntry.id);
                 } else if (messagingEvent.postback) {
-                    fbReceive.handlePostbackMessage(messagingEvent, pageEntry.id);
+                    return fbReceive.handlePostbackMessage(messagingEvent, pageEntry.id);
                 } else if (messagingEvent.referral) {
-                    fbReceive.handleReferralMessage(messagingEvent, pageEntry.id);
+                    return fbReceive.handleReferralMessage(messagingEvent, pageEntry.id);
                 } else {
                     console.log('Webhook received unknown messagingEvent: ', messagingEvent);
                 }
