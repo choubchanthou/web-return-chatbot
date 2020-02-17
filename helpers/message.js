@@ -39,13 +39,13 @@ const getStarted = {
 };
 
 const messageButton = (options, ext = true) => {
-    const { url, title } = options || {};
+    const { url, title, text } = options || {};
     return {
         attachment: {
             type: "template",
             payload: {
                 template_type: "button",
-                text: '',
+                text,
                 buttons: [
                     setPreferencesButton({ url, title }, ext)
                 ]
@@ -114,14 +114,11 @@ const showDownloadVoucherLabel = (object = {}) => {
 const returnShipback = (props = {}) => {
     console.log('props return shipback on message', props);
     const { public_url, order_number } = props;
-    const title = `Return order(${order_number})`;
-    console.log('Message order', messageButton({
-        title,
-        url: public_url
-    }));
+    const title = `RETURN NOW(${order_number})`;
     return messageButton({
         title,
-        url: public_url
+        url: public_url,
+        text: 'Return order'
     });
 }
 
