@@ -96,7 +96,7 @@ const downloadVoucher = (url) => {
 }
 
 const showDownloadVoucherLabel = (object = {}) => {
-    const { label_url, voucher_url } = object;
+    const { label_url, voucher_url, public_url } = object;
     return {
         attachment: {
             type: "template",
@@ -104,7 +104,8 @@ const showDownloadVoucherLabel = (object = {}) => {
                 template_type: "button",
                 buttons: [
                     setPreferencesButton({ url: label_url, title: 'Download Label' }, false),
-                    setPreferencesButton({ url: voucher_url, title: 'Download Voucher' }, false)
+                    setPreferencesButton({ url: voucher_url, title: 'Download Voucher' }, false),
+                    setPreferencesButton({ url: public_url, title: 'Track Shipping' }, true)
                 ]
             }
         }
