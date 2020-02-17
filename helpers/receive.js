@@ -118,8 +118,10 @@ const handleMessageOrder = async (sender, order_number, access_token, token) => 
             arrayMessage = arrayMessage.split(')');
             console.log('fetch shipback id', arrayMessage[0]);
             const { public_url, charged, label_url, voucher_url } = await srbAPI.fetchShipback(arrayMessage[0], token);
+            console.log('fetch shipback', { public_url, charged, label_url, voucher_url });
             if (charged) {
                 await fbSend.sendTracking(sender, {public_url, order_number}, access_token);
+                console.log('Already send tracking');
                 return await fbSend.sendDownloadLabelVoucher(sender, { label_url, voucher_url }, access_token);
             }
             return fbSend.sendReturnShipback(sender, {public_url, order_number}, access_token);
@@ -128,9 +130,6 @@ const handleMessageOrder = async (sender, order_number, access_token, token) => 
     } catch (error) {
         console.log(error);
     }
-    // const { public_url } = await srbAPI.createShipback(order_number, token);
-    // // await query.session.update({ shipback_id: id }, { sender });
-    // return await fbSend.sendReturnShipback(sender, public_url, access_token);
 }
 
 module.exports = {
