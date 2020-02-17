@@ -194,12 +194,13 @@ const buttonReturnItem = {
 };
 
 const messageWelcome = (contact_url) => {
+    const messageText = { text: 'At any time, use the menu below to navigate through the features' };
     const buttons = [
         buttonReturnItem,
         buttonContactSupport(contact_url)
     ];
-    const label = 'What can we help you?'
-    return buttonTemplate(label, buttons);
+    const label = 'What we can do to help you today?'
+    return [messageText, buttonTemplate(label, buttons)];
 };
 
 const onlyMessageWelcome = (person) => {
