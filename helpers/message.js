@@ -210,7 +210,7 @@ const messageRestartProccess = () => {
 const messageUnavailableOrderNumber = () => {
     return [
         notFoundOrderText,
-        messageRestartProccess
+        messageRestartProccess()
     ];
 }
 
