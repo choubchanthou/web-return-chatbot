@@ -74,7 +74,7 @@ const sendUnavailableStore = async (recipientId, access_token) => {
 const sendMessageUnavailableOrderNumber = async (recipientId, access_token) => {
     return await sendMessage(
         recipientId,
-        message.messageUnavailableOrderNumber,
+        message.messageUnavailableOrderNumber(),
         access_token
     );
 };

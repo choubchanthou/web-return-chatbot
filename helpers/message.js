@@ -208,11 +208,10 @@ const messageRestartProccess = () => {
 }
 
 const messageUnavailableOrderNumber = () => {
-    // return [
-    //     notFoundOrderText,
-    //     messageRestartProccess
-    // ];
-    return notFoundOrderText;
+    return [
+        notFoundOrderText,
+        messageRestartProccess
+    ];
 }
 
 module.exports = {
