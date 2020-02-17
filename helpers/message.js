@@ -68,7 +68,7 @@ const messageButtonPostback = (elements) => {
 
 const showTracking = (props = {}) => {
     const { public_url, order_number } = props;
-    const title = `Track Shipping(${order_number})`;
+    const title = `Track Order ${order_number}`;
     return messageButton({
         title,
         url: public_url
@@ -106,7 +106,7 @@ const messageOrderReturned = (object = {}) => {
                 buttons: [
                     setPreferencesButton({ url: label_url, title: 'Download Label' }, false),
                     setPreferencesButton({ url: voucher_url, title: 'Download Voucher' }, false),
-                    setPreferencesButton({ url: public_url, title: `Track Shipping(${order_number})` }, true)
+                    setPreferencesButton({ url: public_url, title: `Track Return ${order_number}` }, true)
                 ]
             }
         }
@@ -116,11 +116,11 @@ const messageOrderReturned = (object = {}) => {
 const returnShipback = (props = {}) => {
     console.log('props return shipback on message', props);
     const { public_url, order_number } = props;
-    const title = `RETURN NOW(${order_number})`;
+    const title = `Return Order ${order_number}`;
     return messageButton({
         title,
         url: public_url,
-        text: 'RETURN ORDER'
+        text: 'Order found'
     });
 }
 
