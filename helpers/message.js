@@ -184,13 +184,11 @@ const buttonContactSupport = (web_url) => {
     return {
         content_type: 'text',
         url: web_url,
-        type: "web_url",
         title: 'CONTACT SUPPORT'
     };
 };
 const buttonReturnItem = {
     content_type: 'text',
-    type: "postback",
     title: 'RETURN ITEM',
     payload: 'postback_return'
 };
