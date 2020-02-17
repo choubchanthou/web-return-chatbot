@@ -48,12 +48,12 @@ const resetState = async (sender, state = null) => {
 
 const state = async (sender) => {
     const { state } = await query.session.fetchSession(sender) || {};
-    return state == undefined ? 'unknown' : state;
+    return state == undefined ? '' : state;
 };
 const setState = async (sender, stateText, more = {}) => {
     const _state = await state(sender);
     const params = Object.assign(more, { state: stateText, sender: sender });
-    if (_state == 'unknown') {
+    if (_state == '') {
         console.log('create state', params);
         await query.session.delete({ sender });
         return await query.session.insert(params);
