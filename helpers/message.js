@@ -45,7 +45,7 @@ const messageButton = (options, ext = true) => {
             type: "template",
             payload: {
                 template_type: "button",
-                text: '123',
+                text: '',
                 buttons: [
                     setPreferencesButton({ url, title }, ext)
                 ]
