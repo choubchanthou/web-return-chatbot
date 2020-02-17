@@ -70,6 +70,12 @@ const handlePostbackSelectStore = async (sender, store_name, access_token) => {
 }
 
 const handelState = async(sender, message, access_token) => {
+    /* state list:
+    1. unknown
+    2. start
+    3. proccess
+    4. unavailable
+    */
     const _state = await state(sender);
     console.log("fetch state", _state);
     if(_state == 'unknown') return false;
@@ -80,8 +86,14 @@ const requestButtonOrder = async(sender, order_id, access_token) => {
     const { store_name } = await query.session.fetchSession(sender);
     const { token } = await query.store.fetchStore(store_name);
     const { order_number } = await srbAPI.fetchOrder(order_id, token);
-    if (order_number == undefined) return await fbSend.sendTryEnterOrder(sender, access_token);
+    if (order_number == undefined) return await unavailableProcess(sender, access_token);
     return await handleMessageOrder(sender, order_number, access_token, token);
+};
+
+const unavailableProcess = async(sender, access_token) => {
+    console.log('Unavailable process', 'set state unavailable');
+    await setState(sender, 'unavailable');
+    return await fbSend.sendTryEnterOrder(sender, access_token);
 };
 
 const handleReturnMessage = async (sender, store_name, message, access_token) => {
