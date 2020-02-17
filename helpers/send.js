@@ -135,5 +135,6 @@ module.exports = {
     sendReturnShipback,
     sendTracking,
     sendMessageWelcome,
-    sendMessageSelectMerchant
+    sendMessageSelectMerchant,
+    sendMessageUnavailableOrderNumber
 };
