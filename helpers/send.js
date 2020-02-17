@@ -72,7 +72,6 @@ const sendUnavailableStore = async (recipientId, access_token) => {
 };
 
 const sendTryEnterOrder = async (recipientId, access_token) => {
-    console.log('message restart process',  message.messageRestartProccess);
     return await sendMessage(
         recipientId,
         [ message.notFoundOrderText, message.messageRestartProccess],

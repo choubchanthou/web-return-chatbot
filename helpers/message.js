@@ -203,6 +203,7 @@ const messageRestartProccess = () => {
         title: 'RESET',
         payload: 'postback_reset'
     }];
+    console.log('message restart process',  buttonTemplate(label, buttons));
     return buttonTemplate(label, buttons);
 }
 
