@@ -52,9 +52,11 @@ const setState = async(sender, stateText, more = {}) => {
     const _state = await state(stateText);
     const params = Object.assign(more, { state: stateText,  sender: sender });
     if(_state == 'unknown') {
+        console.log('create state', params);
         await query.session.delete({ sender });
         return await query.session.insert(params);
     }
+    console.log('update state', params);
     return await query.session.update(params, { sender });
 };
 
