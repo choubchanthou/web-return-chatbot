@@ -137,7 +137,7 @@ const notFoundStoreText = {
 }
 
 const messageSelectMerchant = {
-    text: 'Please select merchant'
+    text: 'Please select a merchant'
 }
 
 const unavailableStoreText = {
@@ -198,9 +198,11 @@ const messageWelcome = (contact_url) => {
         buttonReturnItem,
         buttonContactSupport(contact_url)
     ];
-    const welcomeText = { text: 'Welcome to ShopRunBack!' };
     const label = 'What can we help you?'
-    return [welcomeText, buttonTemplate(label, buttons)];
+    return buttonTemplate(label, buttons);
+};
+const onlyMessageWelcome = {
+    text: 'Welcome to ShopRunBack'
 };
 
 const messageRestartProccess = () => {
@@ -240,5 +242,6 @@ module.exports = {
     unavailableStoreText,
     messageOrderReturned,
     messageWelcome,
-    messageUnavailableOrderNumber
+    messageUnavailableOrderNumber,
+    onlyMessageWelcome
 }

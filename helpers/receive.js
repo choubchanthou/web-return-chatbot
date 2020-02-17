@@ -22,7 +22,10 @@ const handlePostbackMessage = async (event, page_id) => {
     const { access_token, contact } = await query.user.fetchUser(page_id);
     const { payload } = event.postback;
     const senderId = event.sender.id;
-    if (payload == '<USER_DEFINED_PAYLOAD>') return await initMessage(senderId, contact, page_id, access_token);
+    if (payload == '<USER_DEFINED_PAYLOAD>'){
+        await fbSend.sendOnlyMessageWelcome(senderId, access_token);
+        return await initMessage(senderId, contact, page_id, access_token);
+    } 
     if (payload == 'postback_return') return await handlePostbackMerchant(senderId, page_id, access_token);
     if (payload == 'postback_reset') return await initMessage(senderId, contact, page_id, access_token);
     if (payload) return await handlePostbackSelectStore(senderId, payload, access_token);

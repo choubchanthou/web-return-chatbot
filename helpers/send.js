@@ -125,6 +125,13 @@ const sendMessageSelectMerchant = async (recipientId, access_token) => {
         access_token
     );
 };
+const sendOnlyMessageWelcome = async(recipientId, access_token) => {
+    return await sendMessage(
+        recipientId,
+        message.onlyMessageWelcome,
+        access_token
+    );
+}
 module.exports = {
     sendMessage,
     sendReadReceipt,
@@ -137,5 +144,6 @@ module.exports = {
     sendTracking,
     sendMessageWelcome,
     sendMessageSelectMerchant,
-    sendMessageUnavailableOrderNumber
+    sendMessageUnavailableOrderNumber,
+    sendOnlyMessageWelcome
 };
