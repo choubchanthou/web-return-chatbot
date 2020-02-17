@@ -117,7 +117,7 @@ const handleMessageOrder = async (sender, order_number, access_token, token) => 
             let arrayMessage = messageRes.split('(');
             arrayMessage = arrayMessage[arrayMessage.length - 1];
             arrayMessage = arrayMessage.split(')');
-            console.log(arrayMessage[0]);
+            console.log('fetch shipback id', arrayMessage[0]);
             const { public_url, charged, label_url, voucher_url } = await srbAPI.fetchShipback(arrayMessage[0], token);
             if (charged) {
                 await fbSend.sendTracking(sender, public_url, access_token);
