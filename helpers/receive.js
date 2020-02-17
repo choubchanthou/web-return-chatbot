@@ -10,7 +10,7 @@ const handleReceiveMessage = async (event, page_id) => {
         if (message.text) {
             await fbSend.sendReadReceipt(sender, access_token);
             const state = await handelState(sender, message.text, access_token);
-            if(state) return state;
+            if(state != false) return state;
             return await initMessage(sender, contact, access_token);
         }
     } catch (error) {
