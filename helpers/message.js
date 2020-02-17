@@ -109,11 +109,12 @@ const showDownloadVoucherLabel = (object = {}) => {
     }
 }
 
-const returnShipback = (url, order_id) => {
-    const title = `Return order(${order_id})`;
+const returnShipback = (props = {}) => {
+    const { public_url, order_number } = props;
+    const title = `Return order(${order_number})`;
     return messageButton({
         title,
-        url
+        url: public_url
     });
 }
 

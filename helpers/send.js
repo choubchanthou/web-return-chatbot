@@ -103,10 +103,10 @@ const sendPleaseEnterOrder = async (recipientId, access_token) => {
     );
 };
 
-const sendReturnShipback = async (recipientId, url, access_token) => {
+const sendReturnShipback = async (recipientId, props, access_token) => {
     return await sendMessage(
         recipientId,
-        message.returnShipback(url),
+        message.returnShipback(props),
         access_token
     );
 }
