@@ -10,7 +10,7 @@ const handleReceiveMessage = async (event, page_id) => {
         if (message.text) {
             await fbSend.sendReadReceipt(sender, access_token);
             const state = await handelState(sender, message.text, access_token);
-            if(state != false) return state;
+            if (state != false) return state;
             return await initMessage(sender, contact, access_token);
         }
     } catch (error) {
@@ -40,19 +40,19 @@ const initMessage = async (sender, contact, access_token) => {
     return fbSend.sendMessageWelcome(sender, contact, access_token);
 }
 
-const resetState = async(sender, state = null) => {
-    if(state == null) return await query.session.delete({ sender });
+const resetState = async (sender, state = null) => {
+    if (state == null) return await query.session.delete({ sender });
     return await query.session.update({ state }, { sender });
 };
 
-const state = async(sender) => {
+const state = async (sender) => {
     const { state } = await query.session.fetchSession(sender) || {};
-    return state == undefined ? 'unknown' : state; 
+    return state == undefined ? 'unknown' : state;
 };
-const setState = async(sender, stateText, more = {}) => {
+const setState = async (sender, stateText, more = {}) => {
     const _state = await state(sender);
-    const params = Object.assign(more, { state: stateText,  sender: sender });
-    if(_state == 'unknown') {
+    const params = Object.assign(more, { state: stateText, sender: sender });
+    if (_state == 'unknown') {
         console.log('create state', params);
         await query.session.delete({ sender });
         return await query.session.insert(params);
@@ -72,18 +72,18 @@ const handlePostbackSelectStore = async (sender, store_name, access_token) => {
     return await fbSend.sendPleaseEnterOrder(sender, access_token);
 }
 
-const handelState = async(sender, message, access_token) => {
+const handelState = async (sender, message, access_token) => {
     /* state list:
     1. unknown
     2. process
     */
     const _state = await state(sender);
     console.log("fetch state", _state);
-    if(_state == 'process') return await requestButtonOrder(sender, message, access_token);
+    if (_state == 'process') return await requestButtonOrder(sender, message, access_token);
     return false;
 };
 
-const requestButtonOrder = async(sender, order_id, access_token) => {
+const requestButtonOrder = async (sender, order_id, access_token) => {
     const { store_name } = await query.session.fetchSession(sender);
     const { token } = await query.store.fetchStore(store_name);
     const { order_number } = await srbAPI.fetchOrder(order_id, token);
@@ -91,7 +91,7 @@ const requestButtonOrder = async(sender, order_id, access_token) => {
     return await handleMessageOrder(sender, order_number, access_token, token);
 };
 
-const unavailableProcess = async(sender, access_token) => {
+const unavailableProcess = async (sender, access_token) => {
     return await fbSend.sendMessageUnavailableOrderNumber(sender, access_token);
 };
 
@@ -120,11 +120,15 @@ const handleMessageOrder = async (sender, order_number, access_token, token) => 
             const { public_url, charged, label_url, voucher_url } = await srbAPI.fetchShipback(arrayMessage[0], token);
             console.log('fetch shipback', { public_url, charged, label_url, voucher_url });
             if (charged) {
-                return await fbSend.sendDownloadLabelVoucher(sender, { label_url, voucher_url, public_url }, access_token);
+                return await fbSend.sendDownloadLabelVoucher(
+                    sender,
+                    { label_url, voucher_url, public_url,  order_number},
+                    access_token
+                );
             }
-            return fbSend.sendReturnShipback(sender, {public_url, order_number}, access_token);
+            return fbSend.sendReturnShipback(sender, { public_url, order_number }, access_token);
         }
-        return await fbSend.sendReturnShipback(sender, {public_url: shipbacks.public_url, order_number}, access_token);
+        return await fbSend.sendReturnShipback(sender, { public_url: shipbacks.public_url, order_number }, access_token);
     } catch (error) {
         console.log(error);
     }
