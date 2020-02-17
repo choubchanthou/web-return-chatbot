@@ -104,6 +104,7 @@ const sendPleaseEnterOrder = async (recipientId, access_token) => {
 };
 
 const sendReturnShipback = async (recipientId, props, access_token) => {
+    console.log('props return shipback on send.js', props);
     return await sendMessage(
         recipientId,
         message.returnShipback(props),
