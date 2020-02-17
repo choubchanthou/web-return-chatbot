@@ -118,7 +118,7 @@ const returnShipback = (props = {}) => {
     return messageButton({
         title,
         url: public_url,
-        text: 'Return order'
+        text: 'RETURN ORDER'
     });
 }
 
