@@ -71,6 +71,7 @@ const handlePostbackSelectStore = async (sender, store_name, access_token) => {
 
 const handelState = async(sender, message, access_token) => {
     const _state = await state(sender);
+    console.log("fetch state", _state);
     if(_state == 'unknown') return false;
     if(_state == 'start') return await requestButtonOrder(sender, message, access_token);
 };
