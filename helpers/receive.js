@@ -124,7 +124,7 @@ const handleMessageOrder = async (sender, order_number, access_token, token) => 
             }
             return fbSend.sendReturnShipback(sender, {public_url, order_number}, access_token);
         }
-        return await fbSend.sendReturnShipback(sender, {public_url, order_number}, access_token);
+        return await fbSend.sendReturnShipback(sender, {public_url: shipbacks.public_url, order_number}, access_token);
     } catch (error) {
         console.log(error);
     }
