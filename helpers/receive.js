@@ -10,6 +10,7 @@ const handleReceiveMessage = async (event, page_id) => {
         if (message.text) {
             await fbSend.sendReadReceipt(sender, access_token);
             const state = await handelState(sender, message.text, access_token);
+            await setState(sender, 'unknown', { page_id });
             if (state != false) return state;
             return await initMessage(sender, contact, access_token);
         }
@@ -22,7 +23,7 @@ const handlePostbackMessage = async (event, page_id) => {
     const { access_token, contact } = await query.user.fetchUser(page_id);
     const { payload } = event.postback;
     const senderId = event.sender.id;
-    if (payload == '<USER_DEFINED_PAYLOAD>') return await initMessage(senderId, access_token);
+    if (payload == '<USER_DEFINED_PAYLOAD>') return await initMessage(senderId, contact, access_token);
     if (payload == 'postback_return') return await handlePostbackMerchant(senderId, page_id, access_token);
     if (payload == 'postback_reset') return await initMessage(senderId, contact, access_token);
     if (payload) return await handlePostbackSelectStore(senderId, payload, access_token);
